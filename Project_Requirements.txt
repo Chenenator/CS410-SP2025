@@ -1,0 +1,9 @@
+Objective: Create an IoT-based weather monitoring system.
+Development Steps:
+• Connect sensors: DHT11 for humidity/temperature, Photocell Sensor for light, LM35 for
+temperature.
+1
+• Use ESP32 to collect and process data.
+• Display readings on an LCD screen and send them to a remote dashboard.
+Key Components: ESP32, DHT11 Sensor, Photocell Sensor, LM35 Temperature Sensor.
+Enhancements: AI-based weather forecasting and cloud integration.
