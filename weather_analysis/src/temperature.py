@@ -13,8 +13,6 @@ esp32_port = "COM3"  # Adjust as needed
 localWeatherFolder = ("C:/Users/denni/OneDrive - University of Massachusetts Boston/Documents/CS410 "
                       "Materials/CS410-SP2025/weather_analysis/data/localweather")
 
-def find_ssid():
-    ...
 
 def update_wifi_password_in_ino(ssid, password):
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
@@ -31,6 +29,22 @@ def update_wifi_password_in_ino(ssid, password):
         file.write(updated_code)
 
     print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
+
+
+def clear_wifi_credentials():
+    ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
+    ino_path = os.path.join(esp32_sketch_path, ino_file)
+
+    with open(ino_path, 'r') as file:
+        code = file.read()
+
+    cleared_code = re.sub(r'const char\* ssid = ".*?";', 'const char* ssid = "SSID";', code)
+    cleared_code = re.sub(r'const char\* password = ".*?";', 'const char* password = "PASSWORD";', cleared_code)
+
+    with open(ino_path, 'w') as file:
+        file.write(cleared_code)
+
+    print("🧹 Wi-Fi credentials cleared from .ino file.")
 
 
 def compile_and_upload():
@@ -73,6 +87,7 @@ def gatherLocalWeather():
             print("🛑 Data logging stopped.")
         finally:
             ser.close()
+            clear_wifi_credentials()
 
 
 def _main():
