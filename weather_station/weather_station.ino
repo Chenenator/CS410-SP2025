@@ -6,6 +6,11 @@
  * For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-dht11
  */
 
+#include <WiFi.h>
+
+const char* ssid = "DennisWifi";
+const char* password = "connectionMeme52@yay!";
+
 #include <DHT.h>
 #define DHT11_PIN 4 // ESP32 pin GPIO21 connected to DHT11 sensor
 DHT dht11(DHT11_PIN, DHT11);
@@ -14,6 +19,17 @@ DHT dht11(DHT11_PIN, DHT11);
 #define ADC_RESOLUTION 4096.0
 #define PIN_LM35       35 // ESP32 pin GPIO36 (ADC0) connected to LM35
 
+void initWiFi() {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print('.');
+    delay(1000);
+  }
+  Serial.println(WiFi.localIP());
+}
+
 void setup() {
   Serial.begin(9600);
   delay(2000);
@@ -21,6 +37,10 @@ void setup() {
 
   // set the ADC attenuation to 11 dB (up to ~3.3V input)
   analogSetAttenuation(ADC_11db);
+
+  initWiFi();
+  Serial.print("RRSI: ");
+  Serial.println(WiFi.RSSI());
 }
 
 void loop() {
@@ -48,5 +68,5 @@ void loop() {
     Serial.println(tempF, 1);
   }
   // wait a 2 seconds between readings
-  delay(2000);
+  delay(1000);
 }
