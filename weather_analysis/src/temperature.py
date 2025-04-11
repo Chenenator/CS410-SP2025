@@ -5,7 +5,6 @@ import csv
 import subprocess
 from datetime import datetime
 
-
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(current_dir))
@@ -13,13 +12,17 @@ project_root = os.path.dirname(os.path.dirname(current_dir))
 esp32_sketch_path = os.path.join(project_root, "weather_station")  # Folder containing your .ino file
 esp32_board = "esp32:esp32:esp32wroverkit"  # Replace if you're using another ESP32 variant
 esp32_port = "COM3"  # Adjust as needed if COM is different
-localWeatherFolder = os.path.join(project_root, "weather_analysis", "data", "localweather") # Folder to contain recorded weather data.
+localWeatherFolder = os.path.join(project_root, "weather_analysis", "data",
+                                  "localweather")  # Folder to contain recorded weather data.
 
 
+# Automatically updates the password in the ino file based on user input.
 def update_wifi_password_in_ino(ssid, password):
+    # Creates a variable for the ino files and its path.
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
     ino_path = os.path.join(esp32_sketch_path, ino_file)
 
+    # Open the ino files to be read.
     with open(ino_path, 'r') as file:
         code = file.read()
 
@@ -31,6 +34,7 @@ def update_wifi_password_in_ino(ssid, password):
         file.write(updated_code)
 
     print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
+
 
 # Function to reset ssid and password of user once the program ends.
 def clear_wifi_credentials():
