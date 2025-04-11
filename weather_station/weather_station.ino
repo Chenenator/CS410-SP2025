@@ -8,8 +8,8 @@
 
 #include <WiFi.h>
 
-const char* ssid = "DennisWifi";
-const char* password = "connectionMeme52@yay!";
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
 
 #include <DHT.h>
 #define DHT11_PIN 4 // ESP32 pin GPIO21 connected to DHT11 sensor

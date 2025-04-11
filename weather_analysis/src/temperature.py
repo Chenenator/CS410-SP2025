@@ -13,6 +13,8 @@ esp32_port = "COM3"  # Adjust as needed
 localWeatherFolder = ("C:/Users/denni/OneDrive - University of Massachusetts Boston/Documents/CS410 "
                       "Materials/CS410-SP2025/weather_analysis/data/localweather")
 
+def find_ssid():
+    ...
 
 def update_wifi_password_in_ino(ssid, password):
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
