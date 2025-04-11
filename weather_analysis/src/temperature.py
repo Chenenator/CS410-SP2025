@@ -5,13 +5,15 @@ import csv
 import subprocess
 from datetime import datetime
 
-# CONFIGURATION
-esp32_sketch_path = ("C:/Users/denni/OneDrive - University of Massachusetts Boston/Documents/CS410 "
-                     "Materials/CS410-SP2025/weather_station")  # Folder containing your .ino file
+
+# Get the current working directory, then go up to project root.
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
+
+esp32_sketch_path = os.path.join(project_root, "weather_station")  # Folder containing your .ino file
 esp32_board = "esp32:esp32:esp32wroverkit"  # Replace if you're using another ESP32 variant
-esp32_port = "COM3"  # Adjust as needed
-localWeatherFolder = ("C:/Users/denni/OneDrive - University of Massachusetts Boston/Documents/CS410 "
-                      "Materials/CS410-SP2025/weather_analysis/data/localweather")
+esp32_port = "COM3"  # Adjust as needed if COM is different
+localWeatherFolder = os.path.join(project_root, "weather_analysis", "data", "localweather") # Folder to contain recorded weather data.
 
 
 def update_wifi_password_in_ino(ssid, password):
@@ -30,7 +32,7 @@ def update_wifi_password_in_ino(ssid, password):
 
     print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
 
-
+# Function to reset ssid and password of user once the program ends.
 def clear_wifi_credentials():
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
     ino_path = os.path.join(esp32_sketch_path, ino_file)
