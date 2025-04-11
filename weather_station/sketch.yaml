@@ -1,0 +1,2 @@
+default_fqbn: esp32:esp32:esp32wroverkit
+default_port: COM3
