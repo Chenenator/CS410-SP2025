@@ -3,7 +3,9 @@ import re
 import serial
 import csv
 import subprocess
+import platform
 from datetime import datetime
+from wifi import Cell, Scheme
 
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -14,6 +16,44 @@ esp32_board = "esp32:esp32:esp32wroverkit"  # Replace if you're using another ES
 esp32_port = "COM3"  # Adjust as needed if COM is different
 localWeatherFolder = os.path.join(project_root, "weather_analysis", "data",
                                   "localweather")  # Folder to contain recorded weather data.
+
+
+def list_ssid():
+    os_name = platform.system()
+    ssids = []
+
+    try:
+        if os_name == "Windows":
+            output = subprocess.check_output('netsh wlan show networks', shell=True, text=True)
+            # Extract SSIDs using regex (skip "SSID N : " format)
+            ssids = re.findall(r'\s+SSID\s+\d+\s+:\s(.+)', output)
+
+        elif os_name == "Linux":
+            output = subprocess.check_output("nmcli device wifi list", shell=True, text=True)
+            # Extract SSID names from each line (ignoring the header)
+            lines = output.strip().split('\n')[1:]
+            for line in lines:
+                parts = line.strip().split()
+                if parts:
+                    ssids.append(parts[0])
+
+        else:
+            print("Unsupported OS")
+    except subprocess.CalledProcessError as e:
+        print(f"Error listing networks: {e}")
+
+    return ssids
+
+
+def get_current_ssid():
+    try:
+        output = subprocess.check_output(['netsh', 'wlan', 'show', 'interfaces'], encoding='utf-8')
+        ssid_match = re.search(r'\s+SSID\s+:\s(.+)', output)
+        if ssid_match:
+            return ssid_match.group(1).strip()
+    except subprocess.CalledProcessError:
+        pass
+    return None
 
 
 # Automatically updates the password in the ino file based on user input.
@@ -97,7 +137,32 @@ def gatherLocalWeather():
 
 
 def _main():
-    ssid = input("Enter SSID: ")
+    ssid = get_current_ssid()
+    if not ssid:
+        print("❌ Could not detect SSID automatically.")
+        available_ssids = list_ssid()
+
+        if not available_ssids:
+            print("❌ No networks found.")
+            return
+
+        print("\n📡 Available Networks:")
+        for i, network in enumerate(available_ssids, start=1):
+            print(f"{i}. {network}")
+
+        while True:
+            try:
+                choice = int(input("Select the number of the network you want to connect to: "))
+                if 1 <= choice <= len(available_ssids):
+                    ssid = available_ssids[choice - 1]
+                    break
+                else:
+                    print("⚠️ Invalid selection. Please choose a valid number.")
+            except ValueError:
+                print("⚠️ Please enter a number.")
+    else:
+        print(f"📶 Detected network: {ssid}")
+
     wifi_password = input("🔐 Enter your Wi-Fi password: ")
     update_wifi_password_in_ino(ssid, wifi_password)
     compile_and_upload()
