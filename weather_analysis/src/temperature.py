@@ -5,7 +5,6 @@ import csv
 import subprocess
 import platform
 from datetime import datetime
-from wifi import Cell, Scheme
 
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))

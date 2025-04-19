@@ -77,7 +77,7 @@ void initEduroamWiFi() {
   esp_wifi_sta_wpa2_ent_enable(); // Enable WPA2-Enterprise
   esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)eduroam_identity, strlen(eduroam_identity));
   esp_wifi_sta_wpa2_ent_set_username((uint8_t *)eduroam_username, strlen(eduroam_username));
-  esp_wifi_sta_wpa2_ent_set_password((uint8_t *)eduroam_password, strlen(eduroam_password));
+  esp_wifi_sta_wpa2_ent_set_password((uint8_t *)password, strlen(password));
   
   WiFi.begin("eduroam");
 
@@ -147,7 +147,8 @@ void setup() {
   analogSetAttenuation(ADC_11db);
 
   //initWiFi();
-  initEduroamWiFi();
+  //initEduroamWiFi();
+  (ssid == "eduroam") ? initEduroamWiFi() : initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
 
@@ -178,6 +179,7 @@ void loop() {
   }
   // read humidity
   float humi  = dht11.readHumidity();
+
   // Read light sensor
   int analogValue = analogRead(LIGHT_SENSOR_PIN);
     // We'll have a few threshholds, qualitatively determined
