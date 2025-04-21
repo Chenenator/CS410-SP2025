@@ -17,6 +17,8 @@ localWeatherFolder = os.path.join(project_root, "weather_analysis", "data",
                                   "localweather")  # Folder to contain recorded weather data.
 
 
+# For when the program cannot detect the current network, list them out
+# for the user to choose.
 def list_ssid():
     os_name = platform.system()
     ssids = []
@@ -44,19 +46,45 @@ def list_ssid():
     return ssids
 
 
-def get_current_ssid():
+# Get the current network credentials.
+def get_current_network_credentials(ssid):
     try:
-        output = subprocess.check_output(['netsh', 'wlan', 'show', 'interfaces'], encoding='utf-8')
-        ssid_match = re.search(r'\s+SSID\s+:\s(.+)', output)
-        if ssid_match:
-            return ssid_match.group(1).strip()
-    except subprocess.CalledProcessError:
-        pass
-    return None
+        # Get current connected SSID
+        current_output = subprocess.check_output(['netsh', 'wlan', 'show', 'interfaces'], encoding='utf-8')
+        ssid_match = re.search(r'\s*SSID\s*:\s(.+)', current_output)
+        if not ssid_match:
+            print("Could not find SSID.")
+            return
+
+        current_ssid = ssid_match.group(1).strip()
+        print(f"Current SSID: {current_ssid}")
+
+        # If the parameter is not empty, indicating that the current ssid could not be found,
+        # find the password of the manually inputted ssid.
+        if ssid is not None:
+            # Show profile details with key=clear
+            profile_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', ssid, 'key=clear'],
+                                                     encoding='utf-8')
+        else:
+            # Show profile details with key=clear
+            profile_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', current_ssid, 'key=clear'],
+                                                     encoding='utf-8')
+
+        # Obtain password of matching ssid.
+        key_match = re.search(r'Key Content\s*:\s(.+)', profile_output)
+
+        if key_match:
+            print(f"Password: {key_match.group(1).strip()}")
+            return current_ssid, key_match.group(1).strip()
+        else:
+            print("Password not found.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Command failed: {e}")
 
 
 # Automatically updates the password in the ino file based on user input.
-def update_wifi_password_in_ino(ssid, password):
+def update_wifi_credentials_in_ino(ssid, password):
     # Creates a variable for the ino files and its path.
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
     ino_path = os.path.join(esp32_sketch_path, ino_file)
@@ -65,9 +93,43 @@ def update_wifi_password_in_ino(ssid, password):
     with open(ino_path, 'r') as file:
         code = file.read()
 
-    # Perform both substitutions on the full content
+    # Error checking to make sure fields are in .ino file.
+    if 'const char* ssid =' not in code or 'const char* password =' not in code:
+        print("⚠️ Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
+        return
+
+    # In the .ino file, change the ssid and password fields of current connected network.
     updated_code = re.sub(r'const char\* ssid = ".*?";', f'const char* ssid = "{ssid}";', code)
     updated_code = re.sub(r'const char\* password = ".*?";', f'const char* password = "{password}";', updated_code)
+
+    # Write to file.
+    with open(ino_path, 'w') as file:
+        file.write(updated_code)
+
+    print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
+
+
+def update_wifi_credentials_eduroam_in_ino(ssid, password, eduroam_username, eduroam_identity):
+    # Creates a variable for the ino files and its path.
+    ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
+    ino_path = os.path.join(esp32_sketch_path, ino_file)
+
+    # Open the ino files to be read.
+    with open(ino_path, 'r') as file:
+        code = file.read()
+
+    # Error checking to make sure fields are in .ino file.
+    if 'const char* ssid =' not in code or 'const char* password =' not in code or "const char* eduroam_username" not in code or "const char* eduroam_identity" not in code:
+        print("⚠️ Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
+        return
+
+    # Update fields ssid, password, eduroam_username, and eduroam_identity.
+    updated_code = re.sub(r'const char\* ssid = ".*?";', f'const char* ssid = "{ssid}";', code)
+    updated_code = re.sub(r'const char\* password = ".*?";', f'const char* password = "{password}";', updated_code)
+    updated_code = re.sub(r'const char\* eduroam_username = ".*?";',
+                          f'const char* eduroam_username = "{eduroam_username}";', updated_code)
+    updated_code = re.sub(r'const char\* eduroam_identity = ".*?";',
+                          f'const char* eduroam_identity = "{eduroam_identity}";', updated_code)
 
     with open(ino_path, 'w') as file:
         file.write(updated_code)
@@ -85,6 +147,10 @@ def clear_wifi_credentials():
 
     cleared_code = re.sub(r'const char\* ssid = ".*?";', 'const char* ssid = "SSID";', code)
     cleared_code = re.sub(r'const char\* password = ".*?";', 'const char* password = "PASSWORD";', cleared_code)
+    cleared_code = re.sub(r'const char\* eduroam_username = ".*?";',
+                          'const char* eduroam_username = "UNIVERSITY_EMAIL";', cleared_code)
+    cleared_code = re.sub(r'const char\* eduroam_identity = ".*?";',
+                          'const char* eduroam_identity = "UNIVERSITY_EMAIL";', cleared_code)
 
     with open(ino_path, 'w') as file:
         file.write(cleared_code)
@@ -104,6 +170,7 @@ def compile_and_upload():
     print("✅ Upload complete!")
 
 
+# Obtain the local weather data recorded and puts it into csv file.
 def gatherLocalWeather():
     date_str = datetime.now().strftime("%d-%m-%Y")
     os.makedirs(localWeatherFolder, exist_ok=True)
@@ -136,7 +203,7 @@ def gatherLocalWeather():
 
 
 def _main():
-    ssid = get_current_ssid()
+    ssid, wifi_password = get_current_network_credentials(None)
     if not ssid:
         print("❌ Could not detect SSID automatically.")
         available_ssids = list_ssid()
@@ -154,6 +221,7 @@ def _main():
                 choice = int(input("Select the number of the network you want to connect to: "))
                 if 1 <= choice <= len(available_ssids):
                     ssid = available_ssids[choice - 1]
+                    _, wifi_password = get_current_network_credentials(ssid)
                     break
                 else:
                     print("⚠️ Invalid selection. Please choose a valid number.")
@@ -162,10 +230,15 @@ def _main():
     else:
         print(f"📶 Detected network: {ssid}")
 
-    wifi_password = input("🔐 Enter your Wi-Fi password: ")
-    update_wifi_password_in_ino(ssid, wifi_password)
-    compile_and_upload()
-    gatherLocalWeather()
+    if ssid == "eduroam":
+        eduroam_credential = input("Enter your University Email address: ")
+        update_wifi_credentials_eduroam_in_ino(ssid, wifi_password, eduroam_credential, eduroam_credential)
+        compile_and_upload()
+        gatherLocalWeather()
+    else:
+        update_wifi_credentials_in_ino(ssid, wifi_password)
+        compile_and_upload()
+        gatherLocalWeather()
 
 
 if __name__ == '__main__':

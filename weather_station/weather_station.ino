@@ -28,7 +28,6 @@ const char* password = "PASSWORD";
 
 const char* eduroam_username = "UNIVERSITY_EMAIL";
 const char* eduroam_identity = "UNIVERSITY_EMAIL"; // often same as username
-const char* eduroam_password = "EDUROAM_PASSWORD";
 
 #define DHT11_PIN 4 // ESP32 pin GPIO21 connected to DHT11 sensor
 #define LIGHT_SENSOR_PIN 34
@@ -107,7 +106,7 @@ bool reconnect() {
 
   Serial.println("WiFi connection lost. Reconnecting...");
   // Try to reconnect
-  initWiFi();
+  (ssid == "eduroam") ? initEduroamWiFi() : initWiFi();
   // Return actual connection status after attempt
   return (WiFi.status() == WL_CONNECTED);
 }
