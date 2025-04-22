@@ -20,6 +20,7 @@ def backtest (weather, model, predictors, target_col, start = 20100, step = 90):
     every x day to make prediction -> return a dataframe with actual and predicted temperature for each day.
     """
     all_predictions = []
+
     for i in range(start, weather.shape[0], step):
         train = weatherData.iloc[:i, :] # All the rows in our data up to row i to train the model
         test = weatherData.iloc[i:(i+step),:] # Take the next 90 days to make predictions on
@@ -70,7 +71,11 @@ def updatecsv(weatherData):
     """
     weatherData.to_csv("cleaned_weather_data.csv")
 
+
+
+
 """ ************************************** Data Preparation **********************************"""
+
 """
 Read the csv file containing the historical weather data
 Use the panda read csv function
@@ -207,6 +212,6 @@ for target in targets:
 
 multi_predictions = pd.concat(all_results)
 for target in targets:
-    print(f"\n==== All Predictions for {target} ====")
-    print(multi_predictions[multi_predictions["target"] == target][["actual", "prediction", "diff"]])
+     print(f"\n==== All Predictions for {target} ====")
+     print(multi_predictions[multi_predictions["target"] == target][["actual", "prediction", "diff"]])
 #print(predictions)
