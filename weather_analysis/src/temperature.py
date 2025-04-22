@@ -5,6 +5,7 @@ import csv
 import subprocess
 import platform
 from datetime import datetime
+import pyautogui
 
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -77,7 +78,8 @@ def get_current_network_credentials(ssid):
             print(f"Password: {key_match.group(1).strip()}")
             return current_ssid, key_match.group(1).strip()
         else:
-            print("Password not found.")
+            print("Password not found. Either on Eduroam or Open Network.")
+            return current_ssid, None
 
     except subprocess.CalledProcessError as e:
         print(f"Command failed: {e}")
@@ -171,7 +173,7 @@ def compile_and_upload():
 
 
 # Obtain the local weather data recorded and puts it into csv file.
-def gatherLocalWeather():
+def gather_local_weather():
     date_str = datetime.now().strftime("%d-%m-%Y")
     os.makedirs(localWeatherFolder, exist_ok=True)
     filename = os.path.join(localWeatherFolder, f"{date_str}.csv")
@@ -203,6 +205,7 @@ def gatherLocalWeather():
 
 
 def _main():
+    clear_wifi_credentials()
     ssid, wifi_password = get_current_network_credentials(None)
     if not ssid:
         print("❌ Could not detect SSID automatically.")
@@ -230,15 +233,16 @@ def _main():
     else:
         print(f"📶 Detected network: {ssid}")
 
-    if ssid == "eduroam":
+    if "eduroam" in ssid.lower():
         eduroam_credential = input("Enter your University Email address: ")
-        update_wifi_credentials_eduroam_in_ino(ssid, wifi_password, eduroam_credential, eduroam_credential)
+        eduroam_password = pyautogui.password(text='', title='', default='', mask='*')
+        update_wifi_credentials_eduroam_in_ino(ssid, eduroam_password, eduroam_credential, eduroam_credential)
         compile_and_upload()
-        gatherLocalWeather()
+        gather_local_weather()
     else:
         update_wifi_credentials_in_ino(ssid, wifi_password)
         compile_and_upload()
-        gatherLocalWeather()
+        gather_local_weather()
 
 
 if __name__ == '__main__':
