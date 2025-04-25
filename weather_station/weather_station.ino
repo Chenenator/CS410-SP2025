@@ -23,8 +23,8 @@
 #include <Arduino_MQTT_Client.h>
 #include <ArduinoJson.h>
 
-const char* ssid = "SSID";
-const char* password = "PASSWORD";
+const char* ssid = "DennisWifi";
+const char* password = "connectionMeme52@yay!";
 
 const char* eduroam_username = "UNIVERSITY_EMAIL";
 const char* eduroam_identity = "UNIVERSITY_EMAIL"; // often same as username
@@ -126,12 +126,13 @@ void connectToThingsBoard() {
 
 }
 
-void sendDataToThingsBoard(float tempC, float tempF, int humi) {
+void sendDataToThingsBoard(float tempC, float tempF, int humi, int light) {
   StaticJsonDocument<256> jsonDoc;
 
   jsonDoc["TempC"] = tempC;
   jsonDoc["TempF"] = tempF;
   jsonDoc["Humidity"] = humi;
+  jsonDoc["Light"] = light;
 
   tb.sendTelemetryJson(jsonDoc, measureJson(jsonDoc));
   Serial.println("Data sent");
@@ -180,15 +181,15 @@ void loop() {
   float humi  = dht11.readHumidity();
 
   // Read light sensor
-  int analogValue = analogRead(LIGHT_SENSOR_PIN);
-    // We'll have a few threshholds, qualitatively determined
-  if (analogValue < 40) {
+  int lightValue = analogRead(LIGHT_SENSOR_PIN);
+  // We'll have a few threshholds, qualitatively determined
+  if  (lightValue < 40) {
     Serial.println(" => Dark");
-  } else if (analogValue < 800) {
+  } else if  (lightValue < 800) {
     Serial.println(" => Dim");
-  } else if (analogValue < 2000) {
+  } else if  (lightValue < 2000) {
     Serial.println(" => Light");
-  } else if (analogValue < 3200) {
+  } else if  (lightValue < 3200) {
     Serial.println(" => Bright");
   } else {
     Serial.println(" => Very bright");
@@ -212,8 +213,10 @@ void loop() {
     Serial.print(",");
     Serial.print(tempC, 1);
     Serial.print(",");
-    Serial.println(tempF, 1);
-    sendDataToThingsBoard(tempC, tempF, humi);
+    Serial.print(tempF, 1);
+    Serial.print(",");
+    Serial.println(lightValue, 1);
+    sendDataToThingsBoard(tempC, tempF, humi, lightValue);
   }
 
   tb.loop();

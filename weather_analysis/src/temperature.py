@@ -7,7 +7,11 @@ import subprocess
 import platform
 from datetime import datetime
 import pyautogui
+<<<<<<< Updated upstream
 import pandas as pd
+=======
+import json
+>>>>>>> Stashed changes
 
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -199,6 +203,7 @@ def gather_local_weather():
                         timestamp = datetime.now().isoformat(timespec='seconds')
                         writer.writerow([timestamp, *[p.strip() for p in parts]])
                         csv_file.flush()
+
         except KeyboardInterrupt:
             print("🛑 Data logging stopped.")
         finally:
