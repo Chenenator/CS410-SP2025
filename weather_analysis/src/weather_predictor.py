@@ -3,215 +3,155 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge # Ridge regression model
-from sklearn.metrics import mean_squared_error, mean_absolute_error # measuring accuracy
+import requests
+from datetime import datetime
 
-"""****************************************** Functions *****************************************"""
-def getpredictors(weatherData):
-    """
-    getpredictors function: weather data frame -> return weather data frame
-    Give all the columns in the weather data frame except these columns as predictors
-    """
-    excludedColumns = ["maxTemp","minTemp", "name", "station"]
-    return weatherData.columns[~weatherData.columns.isin(excludedColumns)]
+class WeatherPredictor:
+    # Constructor to initialize the path to the weather data CSV file
+    def __init__(self, data_path):
+        self.data_path = data_path
+        self.weather_data = None
+        self.model = Ridge(alpha=0.1) # Ridge regression model
 
-def backtest (weather, model, predictors, target_col, start = 20100, step = 90):
-    """
-    backtest function: weatherData, machine learning model, amount of data to take before making prediction,
-    every x day to make prediction -> return a dataframe with actual and predicted temperature for each day.
-    """
-    all_predictions = []
+    def load_and_prepare_data(self):
+        # Load the weather data CSV into DataFrame and clean it
+        self.weather_data = pd.read_csv(self.data_path, index_col="DATE")
+        self.weather_data.columns = self.weather_data.columns.str.lower() # Optional
 
-    for i in range(start, weather.shape[0], step):
-        train = weatherData.iloc[:i, :] # All the rows in our data up to row i to train the model
-        test = weatherData.iloc[i:(i+step),:] # Take the next 90 days to make predictions on
+        #Convert index to data type
+        self.weather_data.index = pd.to_datetime(self.weather_data.index, errors="coerce")
+        self.weather_data = self.weather_data.ffill() # Fill missing data
 
-        if not np.all(np.isfinite(test[predictors].values)):
-            print(f"Non-finite values in test set at index {i}")
-            print(test[predictors][~np.isfinite(test[predictors])])
-            break
+        # Remove columns with more than 5% missing values
+        null_percentage = self.weather_data.apply(pd.isnull).sum() / self.weather_data.shape[0]
+        valid_columns = self.weather_data.columns[null_percentage < 0.05]
+        self.weather_data = self.weather_data[valid_columns].copy()
 
-        model.fit(train[predictors], train[target_col]) # Fit model to the data
-        preds = model.predict(test[predictors]) # Generate predictions, outputs numpy array
-        preds = pd.Series(preds, index = test.index) # Convert it to panda series = easy to work with
-        combined = pd.concat([test[target_col], preds], axis = 1) # Concatenate real test data with predictions
-        combined.columns = ["actual",  "prediction"]
-        combined["diff"] = (combined["prediction"] - combined["actual"].abs())
-        combined["target"] = target_col
-        all_predictions.append(combined)
+        # Create target columns for prediction (next day's max and min temperature)
+        self.weather_data[["maxtemp", "mintemp"]] = self.weather_data[["tmax", "tmin"]].shift(-1)
+        self.weather_data = self.weather_data.drop(columns=["station", "name"], errors="ignore")
 
-    return pd.concat(all_predictions)
+        # Add rolling average feature
+        for horizon in [3, 14]:
+            for col in ["tmax", "tmin", "prcp"]:
+                self.compute_rolling(horizon, col)
+
+        self.weather_data = self.weather_data.iloc[14:, :] # Drop initial rows with NaNs
+        self.weather_data.fillna(0, inplace=True)
+
+        # Add expanding (cumulative mean) averages by month and day of year
+        for col in ["tmax", "tmin", "prcp"]:
+            self.weather_data[f"month_avg_{col}"] = self.weather_data[col].groupby(
+                self.weather_data.index.month, group_keys=False).apply(lambda x: x.expanding(1).mean())
+            self.weather_data[f"day_avg_{col}"] = self.weather_data[col].groupby(
+                self.weather_data.index.day_of_year, group_keys=False).apply(lambda x: x.expanding(1).mean())
+
+        # Final clean up
+        self.weather_data.replace([np.inf, -np.inf], np.nan, inplace=True)
+        self.weather_data.fillna(0, inplace=True)
+
+    def compute_rolling(self, horizon, col):
+        # Compute rolling average and percentage difference for the given column
+        label = f"rolling_{horizon}_{col}"
+        self.weather_data[label] = self.weather_data[col].rolling(horizon).mean()
+        self.weather_data[f"{label}_percentage"] = (self.weather_data[label] - self.weather_data[col]) / self.weather_data[col]
+
+    def get_predictors(self):
+        # Get list of predictor column names, excluding target and ID columns
+        excluded = ["maxtemp", "mintemp", "name", "station"]
+        return self.weather_data.columns[~self.weather_data.columns.isin(excluded)]
+
+    def predict_next_days(self, days):
+        # Predict the next N days of max and min temperature
+        predictors = self.get_predictors()
+        last_known = self.weather_data.copy()
+        predictions = []
+
+        for _ in range(days):
+            input_row = last_known.iloc[-1:][predictors] # Use last known data for prediction
+
+            self.model.fit(last_known[predictors], last_known["maxtemp"])
+            predicted_max = self.model.predict(input_row)[0] # predict max temp
+
+            self.model.fit(last_known[predictors], last_known["mintemp"])
+            predicted_min = self.model.predict(input_row)[0] # predict min temp
+
+            prediction_date = last_known.index[-1] + pd.Timedelta(days=1)
+
+            # Save prediction in a dictionary
+            predictions.append({
+                "date": prediction_date.strftime("%Y-%m-%d"),
+                "maxTemp": predicted_max,
+                "minTemp": predicted_min
+            })
+            # Simulate new row for the next prediction iteration
+            new_row = last_known.iloc[-1:].copy()
+            new_row.index = [prediction_date]
+            new_row["tmax"] = predicted_max
+            new_row["tmin"] = predicted_min
+            new_row["maxtemp"] = predicted_max
+            new_row["mintemp"] = predicted_min
+            last_known = pd.concat([last_known, new_row])
+
+        return predictions
+
+    def get_N_day_forecast(self, days):
+        #  Main method to load data and return 3-day forecast
+        self.load_and_prepare_data()
+        return self.predict_next_days(days)
+
+    def plot_temperature_trend(self):
+        # Plot historical temperature trends for both Tmax and Tmin with red line for clarity
+        if self.weather_data is None:
+            self.load_and_prepare_data()
+
+        plt.figure(figsize=(14, 7))
+        plt.plot(self.weather_data.index, self.weather_data["tmax"], label="Tmax", color="red")
+        plt.plot(self.weather_data.index, self.weather_data["tmin"], label="Tmin", color="blue")
+        plt.title("Historical Tmax and Tmin Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Temperature (°F)")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
 
-def percentagediff(old, new):
-    """
-    percentagediff function: old value, new value -> return percentage difference
-    """
-    return (new - old) / old
+def send_to_thingsboard(forcast, token):
+    url = f"https://thingsboard.cloud/api/v1/{token}/telemetry"
 
-def computerolling(weather, horizon, col):
-    """
-    computerolling function: weather data frame, horizon, column name -> return weather data frame
-    Compute rolling averages for each column in the weather data frame.
-    """
-    label = f"rolling_{horizon}_{col}"
-    weather[label] = weather[col].rolling(horizon).mean()
-    weather[f"{label}_percentage"] = percentagediff(weather[label], weather[col])
-    return weather
+    for day in forecast:
+        # Convert forecast date to timestamp in milliseconds
+        timestamp = int(datetime.strptime(day["date"], "%Y-%m-%d").timestamp() * 1000)
 
-def expandmean(df):
-    """
-    expandmean function: weather data frame -> return weather data frame
-    Compute expanding averages for each column in the weather data frame.
-    """
-    return df.expanding(1).mean()
+        payload = {
+            "ts": timestamp,
+            "values": {
+                "forecast_maxTemp": round(day["maxTemp"], 2),
+                "forecast_minTemp": round(day["minTemp"], 2)
+            }
+        }
 
-def updatecsv(weatherData):
-    """
-    updatecsv function: weather data frame -> save the weather data frame to a csv file
-    """
-    weatherData.to_csv("cleaned_weather_data.csv")
+    response = requests.post(url, json= payload)
+    if response.status_code != 200:
+        print(f"Error sending data to ThingsBoard: {response.status_code} {response.text}")
+    else:
+        print("Data sent successfully.")
 
 
+if __name__ == "__main__":
+    # Make sure this path points to your actual CSV file
+    data_file_path = os.path.join(os.path.dirname(os.getcwd()), "data", "bostonweather.csv")
 
+    predictor = WeatherPredictor(data_file_path)
+    DAYS = 5
+    forecast = predictor.get_N_day_forecast(DAYS)
 
-""" ************************************** Data Preparation **********************************"""
+    print("3-Day Forecast:")
+    for day in forecast:
+        print(f"{day['date']}: Max {day['maxTemp']:.2f}°F, Min {day['minTemp']:.2f}°F")
 
-"""
-Read the csv file containing the historical weather data
-Use the panda read csv function
-"""
-weatherData = pd.read_csv(os.path.dirname(os.getcwd()) + "/data/bostonweather.csv", index_col="DATE")
-#print(weatherData)
+    ACCESS_TOKEN = "3b31esjpyf1indh7wm3l"
+    send_to_thingsboard(forecast, ACCESS_TOKEN)
 
-""" 
-Remove any data containing NaN (Bad for machine learning model)
-"""
-nullPercentage = weatherData.apply(pd.isnull).sum() / weatherData.shape[0]
-#print(nullPercentage)
-
-"""
-Clean up data, remove any column where the null percentage is too low (adjust accordingly)
-"""
-validColumns = weatherData.columns[nullPercentage <.05]
-#print(validColumns)
-
-"""
-Change the data set, containing only the validColumns. Fill any missing values
-"""
-weatherData = weatherData[validColumns].copy()
-weatherData.columns = weatherData.columns.str.lower() #Make column names lower case (optional)
-weatherData = weatherData.ffill()
-#print(weatherData.apply(pd.isnull).sum())
-
-"""
-Make sure data columns are correct data type and the index as well
-"""
-#print(weatherData.dtypes)
-#print(weatherData.index)
-
-"""
-Convert index to data type
-"""
-weatherData.index = pd.to_datetime(weatherData.index, errors= "coerce")
-#print(weatherData.index.year.value_counts().sort_index())
-"""
-Drop non-numeric columns and check for gaps in data. Too many gaps = less accurate prediction.
-"""
-weatherData = weatherData.drop(columns=["station", "name"], errors="ignore") # Errors="ignore" in case the columns aren't there
-#print(weatherData.index.year.value_counts().sort_index())
-#plt.plot(weatherData["snow"]) # Plot on graph
-#plt.show()
-
-""" ********************************** Machine Learning Part ***************************** """
-
-"""
-Get the target data column
-"""
-# Get the target data column
-#weatherData["target"] = weatherData.shift(-1)["tmax"]
-weatherData[["maxTemp", "minTemp"]] = weatherData[["tmax", "tmin"]].shift(-1)
-#print(weatherData)
-weatherData.ffill() # To fill the missing data, with the last row if data is large.
-
-"""
-Check for correlation
-"""
-#print(weatherData.corr())
-
-"""
-Initialize ridge regression model, Alpha parameter controls how much the coefficients 
-are shrunk to account for collinearity
-"""
-rr = Ridge(alpha=.1)
-
-#predictors = weatherData.columns[~weatherData.columns.isin(["target", "name", "station"])]
-#print(predictors)
-
-#print(getpredictors(weatherData))
-
-#predictions = backtest(weatherData, rr, getpredictors(weatherData))
-#print(predictions)
-
-"""
-Measure how effective the algorithm was
-"""
-#print(predictions["diff"].mean())
-#print(mean_absolute_error(predictions["actual"], predictions["prediction"]))
-
-rollingHorizon = [3, 14]
-
-for horizon in rollingHorizon:
-    for col in ["tmax", "tmin", "prcp"]:
-        weatherData = computerolling(weatherData, horizon, col)
-
-#print(weatherData)
-weatherData = weatherData.iloc[14:, :] # Remove the first 14 rows since they have NaN
-weatherData = weatherData.fillna(0) # Find missing values and fill them in with 0
-#print(weatherData)
-
-"""
-Go through the data, group it by month, then go one by one through each group and find the mean
-of all the date before that given date. Similar to day average.
-"""
-for col in ["tmax", "tmin", "prcp"]:
-    weatherData[f"month_avg_{col}"] = weatherData[col].groupby(weatherData.index.month,
-                                                               group_keys=False).apply(expandmean)
-    weatherData[f"day_avg_{col}"] = weatherData[col].groupby(weatherData.index.day_of_year,
-                                                             group_keys=False).apply(expandmean)
-    #print(weatherData)
-
-"""
-Final data cleaning.
-"""
-weatherData.replace([np.inf, -np.inf], np.nan, inplace=True)
-weatherData.fillna(0, inplace=True)
-
-"""
-Retrain the model with the new data.
-"""
-#predictors = weatherData.columns[~weatherData.columns.isin(["target", "name", "station"])]
-#getpredictors(weatherData)
-#print(predictors)
-#predictions = backtest(weatherData, rr, getpredictors(weatherData))
-#print(predictions["diff"].mean())
-#print(mean_absolute_error(predictions["actual"], predictions["prediction"]))
-#print(weatherData)
-
-"""Diagnostics"""
-#print(predictions.sort_values("diff", ascending= False)) # Get the days which have the biggest errors
-#print(weatherData.loc["1990-03-07": "1990-03-14"])
-#print(predictions["diff"].round().value_counts().sort_index())
-#plt.plot(predictions["diff"].round().value_counts().sort_index() / predictions.shape[0])
-#plt.show()
-targets = ["maxTemp", "minTemp"]
-all_results = []
-
-for target in targets:
-    predictions = backtest(weatherData, rr, getpredictors(weatherData), target)
-    all_results.append(predictions)
-
-multi_predictions = pd.concat(all_results)
-for target in targets:
-     print(f"\n==== All Predictions for {target} ====")
-     print(multi_predictions[multi_predictions["target"] == target][["actual", "prediction", "diff"]])
-#print(predictions)
+    #predictor.plot_temperature_trend()
