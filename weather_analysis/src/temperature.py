@@ -7,11 +7,9 @@ import subprocess
 import platform
 from datetime import datetime
 import pyautogui
-<<<<<<< Updated upstream
 import pandas as pd
-=======
 import json
->>>>>>> Stashed changes
+#
 
 # Get the current working directory, then go up to project root.
 current_dir = os.path.dirname(os.path.abspath(__file__))
