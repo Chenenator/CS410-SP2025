@@ -117,7 +117,7 @@ class WeatherPredictor:
         plt.show()
 
 
-def send_to_thingsboard(forcast, token):
+def send_to_thingsboard(forecast, token):
     url = f"https://thingsboard.cloud/api/v1/{token}/telemetry"
 
     for day in forecast:
@@ -127,31 +127,32 @@ def send_to_thingsboard(forcast, token):
         payload = {
             "ts": timestamp,
             "values": {
-                "forecast_maxTemp": round(day["maxTemp"], 2),
-                "forecast_minTemp": round(day["minTemp"], 2)
+                "Predicted maxTemp": round(day["maxTemp"], 2),
+                "Predicted minTemp": round(day["minTemp"], 2)
             }
         }
 
-    response = requests.post(url, json= payload)
-    if response.status_code != 200:
-        print(f"Error sending data to ThingsBoard: {response.status_code} {response.text}")
-    else:
-        print("Data sent successfully.")
+        # ✅ Send each day's payload separately
+        response = requests.post(url, json=payload)
 
+        if response.status_code != 200:
+            print(f"Error sending data for {day['date']}: {response.status_code} {response.text}")
+        else:
+            print(f"Sent prediction for {day['date']}")
 
 if __name__ == "__main__":
-    # Make sure this path points to your actual CSV file
+    # path to bostonweather.csv
     data_file_path = os.path.join(os.path.dirname(os.getcwd()), "data", "bostonweather.csv")
 
     predictor = WeatherPredictor(data_file_path)
     DAYS = 5
     forecast = predictor.get_N_day_forecast(DAYS)
 
-    print("3-Day Forecast:")
+    print("Future Day Forecast:")
     for day in forecast:
         print(f"{day['date']}: Max {day['maxTemp']:.2f}°F, Min {day['minTemp']:.2f}°F")
 
-    ACCESS_TOKEN = "3b31esjpyf1indh7wm3l"
+    ACCESS_TOKEN = "RdUYWvQYczLFV5zSfziq"
     send_to_thingsboard(forecast, ACCESS_TOKEN)
 
     #predictor.plot_temperature_trend()
