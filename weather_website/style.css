@@ -111,13 +111,16 @@ body {
 .data-grid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
+    gap: 2rem;
     margin-bottom: 1.5rem;
 }
 
 .data-item {
     margin: 1rem;
     flex: 1 1 200px;
+    text-align: center;
+    min-height: 100px;
 }
 
 .data-item h2 {
@@ -212,5 +215,3 @@ footer a {
         display: flex;
     }
 }
-
-
