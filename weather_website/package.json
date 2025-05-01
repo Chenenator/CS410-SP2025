@@ -1,0 +1,16 @@
+{
+  "name": "weather_station_website",
+  "version": "1.0.0",
+  "main": "templates/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "express": "^5.1.0"
+  }
+}
