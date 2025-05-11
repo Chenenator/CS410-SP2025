@@ -174,7 +174,7 @@ def compile_and_upload():
 
 # Obtain the local weather data recorded and puts it into csv file.
 def gather_local_weather():
-    date_str = datetime.now().strftime("%Y-%m-%d")
+    date_str = datetime.now().strftime("%d-%m-%Y")
     os.makedirs(localWeatherFolder, exist_ok=True)
     filename = os.path.join(localWeatherFolder, f"{date_str}.csv")
 
@@ -184,7 +184,7 @@ def gather_local_weather():
     with open(filename, mode='a', newline='') as csv_file:
         writer = csv.writer(csv_file)
         if not file_exists:
-            writer.writerow(['Timestamp', 'Humidity (%)', 'Temp (°C)', 'Temp (°F)'])
+            writer.writerow(['Timestamp', 'Humidity (%)', 'Temp (C)', 'Temp (F)', 'Light Level (eV)', 'Brightness'])
 
         print("📡 Listening to ESP32 serial output... Press Ctrl+C to stop.")
         try:
@@ -193,7 +193,7 @@ def gather_local_weather():
                 if line:
                     print(f"ESP32: {line}")
                     parts = line.split(',')
-                    if len(parts) == 3:
+                    if len(parts) == 5:
                         timestamp = datetime.now().isoformat(timespec='seconds')
                         writer.writerow([timestamp, *[p.strip() for p in parts]])
                         csv_file.flush()
@@ -203,6 +203,7 @@ def gather_local_weather():
         finally:
             ser.close()
             clear_wifi_credentials()
+
 
 def _main():
     clear_wifi_credentials()
@@ -243,6 +244,7 @@ def _main():
         update_wifi_credentials_in_ino(ssid, wifi_password)
         compile_and_upload()
         gather_local_weather()
+
 
 if __name__ == '__main__':
     _main()

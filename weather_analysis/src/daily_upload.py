@@ -13,6 +13,7 @@ localWeatherFolder = os.path.join(project_root, "weather_analysis", "data",
 
 bostonweather_path = os.path.join(os.path.dirname(os.getcwd()), "data", "bostonweather.csv")
 
+
 def get_max_min_temperature_from_today():
     today = datetime.now().strftime("%d-%m-%Y")
     today_csv_path = os.path.join(localWeatherFolder, f"{today}.csv")
@@ -31,6 +32,7 @@ def get_max_min_temperature_from_today():
         print(f"Error reading today's CSV: {e}")
         return None, None
 
+
 def send_daily_temps_to_thingsboard(max_temp, min_temp):
     url = f"https://thingsboard.cloud/api/v1/{ACCESS_TOKEN}/telemetry"
     payload = {
@@ -46,6 +48,7 @@ def send_daily_temps_to_thingsboard(max_temp, min_temp):
             print(f"Failed to send data: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"⚠️ Error sending to ThingsBoard: {e}")
+
 
 def append_today_to_bostonweather(max_temp, min_temp):
     today = datetime.now().strftime("%Y-%m-%d")
@@ -71,6 +74,7 @@ def append_today_to_bostonweather(max_temp, min_temp):
     else:
         print(f" Bostonweather.csv not found at {bostonweather_path}")
 
+
 def main():
     max_temp, min_temp = get_max_min_temperature_from_today()
 
@@ -81,6 +85,7 @@ def main():
         append_today_to_bostonweather(max_temp, min_temp)
     else:
         print("No data to upload.")
+
 
 if __name__ == "__main__":
     main()

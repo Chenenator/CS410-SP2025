@@ -2,25 +2,26 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import Ridge # Ridge regression model
+from sklearn.linear_model import Ridge  # Ridge regression model
 import requests
 from datetime import datetime
+
 
 class WeatherPredictor:
     # Constructor to initialize the path to the weather data CSV file
     def __init__(self, data_path):
         self.data_path = data_path
         self.weather_data = None
-        self.model = Ridge(alpha=0.1) # Ridge regression model
+        self.model = Ridge(alpha=0.1)  # Ridge regression model
 
     def load_and_prepare_data(self):
         # Load the weather data CSV into DataFrame and clean it
         self.weather_data = pd.read_csv(self.data_path, index_col="DATE")
-        self.weather_data.columns = self.weather_data.columns.str.lower() # Optional
+        self.weather_data.columns = self.weather_data.columns.str.lower()  # Optional
 
         #Convert index to data type
         self.weather_data.index = pd.to_datetime(self.weather_data.index, errors="coerce")
-        self.weather_data = self.weather_data.ffill() # Fill missing data
+        self.weather_data = self.weather_data.ffill()  # Fill missing data
 
         # Remove columns with more than 5% missing values
         null_percentage = self.weather_data.apply(pd.isnull).sum() / self.weather_data.shape[0]
@@ -36,7 +37,7 @@ class WeatherPredictor:
             for col in ["tmax", "tmin", "prcp"]:
                 self.compute_rolling(horizon, col)
 
-        self.weather_data = self.weather_data.iloc[14:, :] # Drop initial rows with NaNs
+        self.weather_data = self.weather_data.iloc[14:, :]  # Drop initial rows with NaNs
         self.weather_data.fillna(0, inplace=True)
 
         # Add expanding (cumulative mean) averages by month and day of year
@@ -54,7 +55,8 @@ class WeatherPredictor:
         # Compute rolling average and percentage difference for the given column
         label = f"rolling_{horizon}_{col}"
         self.weather_data[label] = self.weather_data[col].rolling(horizon).mean()
-        self.weather_data[f"{label}_percentage"] = (self.weather_data[label] - self.weather_data[col]) / self.weather_data[col]
+        self.weather_data[f"{label}_percentage"] = (self.weather_data[label] - self.weather_data[col]) / \
+                                                   self.weather_data[col]
 
     def get_predictors(self):
         # Get list of predictor column names, excluding target and ID columns
@@ -68,13 +70,13 @@ class WeatherPredictor:
         predictions = []
 
         for _ in range(days):
-            input_row = last_known.iloc[-1:][predictors] # Use last known data for prediction
+            input_row = last_known.iloc[-1:][predictors]  # Use last known data for prediction
 
             self.model.fit(last_known[predictors], last_known["maxtemp"])
-            predicted_max = self.model.predict(input_row)[0] # predict max temp
+            predicted_max = self.model.predict(input_row)[0]  # predict max temp
 
             self.model.fit(last_known[predictors], last_known["mintemp"])
-            predicted_min = self.model.predict(input_row)[0] # predict min temp
+            predicted_min = self.model.predict(input_row)[0]  # predict min temp
 
             prediction_date = last_known.index[-1] + pd.Timedelta(days=1)
 
@@ -139,6 +141,7 @@ def send_to_thingsboard(forecast, token):
             print(f"Error sending data for {day['date']}: {response.status_code} {response.text}")
         else:
             print(f"Sent prediction for {day['date']}")
+
 
 if __name__ == "__main__":
     # path to bostonweather.csv

@@ -23,8 +23,8 @@
 #include <Arduino_MQTT_Client.h>
 #include <ArduinoJson.h>
 
-const char* ssid = "DennisWifi";
-const char* password = "connectionMeme52@yay!";
+const char* ssid = "SSID";
+const char* password = "PASSWORD";
 
 const char* eduroam_username = "UNIVERSITY_EMAIL";
 const char* eduroam_identity = "UNIVERSITY_EMAIL"; // often same as username
@@ -126,13 +126,14 @@ void connectToThingsBoard() {
 
 }
 
-void sendDataToThingsBoard(float tempC, float tempF, int humi, int light) {
+void sendDataToThingsBoard(float tempC, float tempF, int humi, int light, String brightness) {
   StaticJsonDocument<256> jsonDoc;
 
   jsonDoc["TempC"] = tempC;
   jsonDoc["TempF"] = tempF;
   jsonDoc["Humidity"] = humi;
   jsonDoc["Light"] = light;
+  jsonDoc["Brightness"] = brightness;
 
   tb.sendTelemetryJson(jsonDoc, measureJson(jsonDoc));
   Serial.println("Data sent");
@@ -146,8 +147,6 @@ void setup() {
   // set the ADC attenuation to 11 dB (up to ~3.3V input)
   analogSetAttenuation(ADC_11db);
 
-  //initWiFi();
-  //initEduroamWiFi();
   (ssid == "eduroam") ? initEduroamWiFi() : initWiFi();
   Serial.print("RRSI: ");
   Serial.println(WiFi.RSSI());
@@ -182,17 +181,18 @@ void loop() {
 
   // Read light sensor
   int lightValue = analogRead(LIGHT_SENSOR_PIN);
+  String brightness = "";
   // We'll have a few threshholds, qualitatively determined
   if  (lightValue < 40) {
-    Serial.println(" => Dark");
+    brightness = "Dark";
   } else if  (lightValue < 800) {
-    Serial.println(" => Dim");
+    brightness = "Dim";
   } else if  (lightValue < 2000) {
-    Serial.println(" => Light");
+    brightness = "Light";
   } else if  (lightValue < 3200) {
-    Serial.println(" => Bright");
+    brightness = "Bright";
   } else {
-    Serial.println(" => Very bright");
+    brightness = "Very Bright";
   }
   
   // read the ADC value from the temperature sensor
@@ -215,8 +215,10 @@ void loop() {
     Serial.print(",");
     Serial.print(tempF, 1);
     Serial.print(",");
-    Serial.println(lightValue, 1);
-    sendDataToThingsBoard(tempC, tempF, humi, lightValue);
+    Serial.print(lightValue, 1);
+    Serial.print(",");
+    Serial.println(brightness);
+    sendDataToThingsBoard(tempC, tempF, humi, lightValue, brightness);
   }
 
   tb.loop();

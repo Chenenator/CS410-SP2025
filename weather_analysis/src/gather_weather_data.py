@@ -75,7 +75,7 @@ def save_to_csv(data):
         writer = csv.writer(file)
         writer.writerow(row)
 
-    print(f"[{datetime.now()}] 📥 Saved: Temp={temp}°C, Humidity={humidity}%")
+    print(f"[{datetime.now()}] 📥 Saved: Temp={temp}°F, Humidity={humidity}%")
 
 
 # ----------------- Main Loop -------------------
