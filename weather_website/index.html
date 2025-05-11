@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dennis Wong • Weather Station</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="navbar">
+  <div class="logo">Weather</div>
+  <nav>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#weather">Weather</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="https://github.com/Gro0mp" target="_blank">GitHub</a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌓</button>
+</header>
+
+<section id="weather" class="section-container glass fade-in">
+  <h1 class="section-title">🌤️ Weather Station</h1>
+  <p class="section-subtitle">Live Temperature and Humidity Readings</p>
+
+  <div class="data-grid">
+    <div class="data-item">
+      <h2>🌡️ Temperature</h2>
+      <p><span id="tempC">--</span> °C / <span id="tempF">--</span> °F</p>
+    </div>
+
+    <div class="data-item">
+      <h2>🥵 Feels Like</h2>
+      <p><span id="feelsLike">--</span> °F</p>
+    </div>
+
+    <div class="data-item">
+      <h2>💧 Humidity</h2>
+      <p><span id="humidity">--</span>%</p>
+    </div>
+    
+    <div class="data-item">
+      <h2>🌟 Brightness</h2>
+      <p><span id="light"></span></p>
+    </div>
+
+    <div class="data-item">
+      <h2>🕒 Last Update</h2>
+      <p><span id="timestamp">--</span></p>
+    </div>
+  </div>
+
+  <button id="refreshBtn" onclick="refreshData()">
+    🔁 Refresh
+    <span id="spinner" class="hidden">⏳</span>
+  </button>
+</section>
+
+<section id="dashboard" class="section-container fade-in">
+  <h2 class="section-title">📊 Live Dashboard</h2>
+  <iframe
+    src="https://thingsboard.cloud/dashboard/87fdc380-168d-11f0-86ac-951bbb28eae1?publicId=3fdf3290-1814-11f0-86ac-951bbb28eae1"
+    allowfullscreen>
+  </iframe>
+
+  <h2 class="section-title" style="margin-top: 3rem;">🔮 Weather Prediction</h2>
+  <iframe
+    src="https://thingsboard.cloud/dashboard/7f9d0c60-2267-11f0-80e6-43c583a0c385?publicId=3fdf3290-1814-11f0-86ac-951bbb28eae1"
+    allowfullscreen>
+  </iframe>
+</section>
+
+<footer>
+  <p>&copy; 2025 Dennis Wong • <a href="https://github.com/Gro0mp" target="_blank">GitHub</a></p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
