@@ -1,2 +1,3 @@
+#define the target board(esp32) and port (COM3)
 default_fqbn: esp32:esp32:esp32wroverkit
 default_port: COM3
