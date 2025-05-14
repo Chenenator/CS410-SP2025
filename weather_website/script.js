@@ -1,11 +1,14 @@
+//function for switching to dark mode (purple)
 function toggleDarkMode() {
     document.body.classList.toggle("dark");
 }
 
+//function for hamburger functonality
 function toggleMobileNav() {
     document.getElementById("nav-links").classList.toggle("show");
 }
 
+//function for calculating "feels like" temp
 function calculateFeelsLike(tempF, humidity) {
     if (tempF < 40 || humidity < 40) return tempF; // No adjustment needed
 
@@ -24,6 +27,7 @@ function calculateFeelsLike(tempF, humidity) {
     return HI.toFixed(1);
 }
 
+//function for refreshing temp, humidity, and light data
 async function refreshData() {
     const spinner = document.getElementById("spinner");
     spinner.classList.remove("hidden");
