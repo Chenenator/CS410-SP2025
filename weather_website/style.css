@@ -1,5 +1,7 @@
+/* import Poppins formating*/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
+/* global variables for use in formating */
 :root {
     --primary: #222;
     --accent: #3a7bd5;
@@ -10,6 +12,7 @@
     --bg: linear-gradient(135deg, #3a7bd5, #00d2ff);
 }
 
+/* darkmode proporties*/
 body.dark {
     --text: #ffffff;
     --bg: linear-gradient(135deg, #7928ca, #ff0080); /* <-- NEW purple-pink gradient */
@@ -17,6 +20,7 @@ body.dark {
     --white: #f5f5f5;
 }
 
+/* style and sizeing */
 * {
     margin: 0;
     padding: 0;
@@ -24,6 +28,7 @@ body.dark {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* CSS rules for <body> */
 body {
     font-family: 'Poppins', sans-serif;
     background: var(--bg);
@@ -162,7 +167,7 @@ iframe {
     display: block;
     margin: 0 auto; /* Center horizontally */
 }
-
+/* dashboard format */
 #dashboard {
     max-width: 100%;
     width: 100%;
