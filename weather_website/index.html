@@ -1,5 +1,8 @@
 <!DOCTYPE html>
+<!-- sets language to english-->
 <html lang="en">
+  
+<!-- Header: sets title, UTF-8 encoding, scale, font, and css formating-->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -8,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- includes formating and buttons-->
 <header class="navbar">
   <div class="logo">Weather</div>
   <nav>
@@ -22,7 +27,7 @@
   </nav>
   <button class="dark-toggle" onclick="toggleDarkMode()">🌓</button>
 </header>
-
+<!-- formats weather section with temp, "feels like", humidity, and brightness-->
 <section id="weather" class="section-container glass fade-in">
   <h1 class="section-title">🌤️ Weather Station</h1>
   <p class="section-subtitle">Live Temperature and Humidity Readings</p>
@@ -60,6 +65,7 @@
   </button>
 </section>
 
+<!-- formats live dashboard graph of humidity and temperature and AI weather prediction section -->
 <section id="dashboard" class="section-container fade-in">
   <h2 class="section-title">📊 Live Dashboard</h2>
   <iframe
@@ -74,10 +80,12 @@
   </iframe>
 </section>
 
+<!-- references -->
 <footer>
   <p>&copy; 2025 Dennis Wong • <a href="https://github.com/Gro0mp" target="_blank">GitHub</a></p>
 </footer>
 
+<!-- adding JavaScript --> 
 <script src="script.js"></script>
 </body>
 </html>
