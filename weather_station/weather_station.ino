@@ -49,6 +49,14 @@ Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient, MAX_MESSAGE_SIZE);
 
 // WiFi connection with timeout and better status handling
+/**
+* @brief Connects esp32 to wifi with error handeling
+*
+* @details
+* Connects to wifi network using ssid and password provided
+* This connection has timeout and status handeling functionality
+*
+*/
 void initWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -69,7 +77,13 @@ void initWiFi() {
   Serial.print(WiFi.RSSI());
   Serial.println(" dBm");
 }
-
+/**
+* @brief Arduino code for conecting sensor data to thingsboard over Eduroam wifi
+*
+* @details
+* Disconects previous wifi connection and enables WPA2-enterprise to allow 
+* connection with school wifi
+*/
 void initEduroamWiFi() {
   WiFi.disconnect(true); // Disconnect previous WiFi
   WiFi.mode(WIFI_STA);
@@ -98,6 +112,12 @@ void initEduroamWiFi() {
 }
 
 // Fixed reconnect function
+/**
+* @brief Function for reconnecting to the wifi
+*
+* @details
+* This code checks the wifi status and attempts to reconect if disconected
+*/
 bool reconnect() {
   const wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
@@ -110,7 +130,13 @@ bool reconnect() {
   // Return actual connection status after attempt
   return (WiFi.status() == WL_CONNECTED);
 }
-
+/**
+* @brief Fuction for creating a connection to ThingsBoard
+*
+* @details
+* connects esp32 to Things board to transfer data to the cloud
+* using TB_SERVER, TOKEN, and TB_PORT
+*/
 void connectToThingsBoard() {
     // Connect to the ThingsBoard
     Serial.print("Connecting to: ");
@@ -125,7 +151,18 @@ void connectToThingsBoard() {
     tb.sendAttributeData("macAddress", WiFi.macAddress().c_str());
 
 }
-
+/**
+* @brief Function for sending data from esp32 to ThingsBoard
+*
+* @param tempC The temperature in Celcius
+* @param tempF The temperature in Ferinheight
+* @param humi The humidity presentage
+* @param light The light level
+* @param brightness The brightneess
+*
+* @details
+* This function takes weather variables as parameters and sends them to the ThingsBoard cloud
+*/
 void sendDataToThingsBoard(float tempC, float tempF, int humi, int light, String brightness) {
   StaticJsonDocument<256> jsonDoc;
 
@@ -139,6 +176,13 @@ void sendDataToThingsBoard(float tempC, float tempF, int humi, int light, String
   Serial.println("Data sent");
 }
 
+/**
+* @brief Fuction for setting up environment for sensors and esp32
+*
+* @details
+* This function initializes the DHT11 sensor, sets timeout for config portal,
+* and creates an accesspoint called "WeatherStation" if it can't connect to wifi
+*/
 void setup() {
   Serial.begin(9600);
   delay(2000);
@@ -168,6 +212,12 @@ void setup() {
   Serial.println("Connected to WiFi!");
 }
 
+/**
+* @brief Fuction for reading sensor data
+*
+* @details
+* This function loops to continually read sensor data at one second interval
+*/
 void loop() {
   // wait a 1 seconds between readings
   delay(1000);
