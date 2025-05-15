@@ -35,7 +35,7 @@ This is a smart, connected weather station powered by an ESP32 board and various
 
 ## 📖 Manual
 
-🔌 1. Hardware Setup
+### 🔌 1. Hardware Setup
   -  DHT11 Humidity Sensor:
       * G Pin -> Ground Slot
       * V Pin -> 3V3 Slot
@@ -49,7 +49,42 @@ This is a smart, connected weather station powered by an ESP32 board and various
       * V Pin -> 3V3 Slot
       * S Pin -> D34 Slot
 
-🖥️ 2. Software Requirements
-  - Python 3.10+
-  - Arduino CLI
-  - Drivers for ESP32 
+---
+
+### 🖥️ 2. Software Requirements
+
+- Python 3.10+
+- [Arduino CLI](https://arduino.github.io/arduino-cli/)
+- Install Python dependencies:
+  ```bash
+  
+  pip install -r requirements.txt
+
+---
+
+### ⚙️ 3. Initial Setup
+
+Install ESP32 Board in Arduino CLI:
+ ```bash
+  arduino-cli core install esp32:esp32
+```
+Compile & Upload Firmware:
+
+Run the GUI or directly execute:
+
+    python src/weather_analysis/weather_gui_launcher.py
+
+Wi-Fi Credentials:
+
+Auto-detects and updates .ino with current SSID and password
+
+Eduroam/WPA2-Enterprise support with prompt for university credentials
+
+---
+
+### 🖱️ 4. Launch GUI
+
+Run with Python:
+
+```bash
+python src/weather_analysis/weather_gui_launcher.py
