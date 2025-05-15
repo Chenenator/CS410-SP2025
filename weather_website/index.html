@@ -1,3 +1,8 @@
+<!--!
+ @file index.html
+ @brief The home page of the Weather Station website
+-->
+
 <!DOCTYPE html>
 <!-- sets language to english-->
 <html lang="en">
@@ -31,7 +36,10 @@
 <section id="weather" class="section-container glass fade-in">
   <h1 class="section-title">🌤️ Weather Station</h1>
   <p class="section-subtitle">Live Temperature and Humidity Readings</p>
-
+  <!--!
+   @brief The main live weather pannel
+   @details This pannel shows the temperature, "feels like", humidity, and brightness
+  -->
   <div class="data-grid">
     <div class="data-item">
       <h2>🌡️ Temperature</h2>
@@ -66,13 +74,21 @@
 </section>
 
 <!-- formats live dashboard graph of humidity and temperature and AI weather prediction section -->
+
 <section id="dashboard" class="section-container fade-in">
+  <!--!
+   @brief This section contains the live dashboard
+   @details This section shows a scrolling graph of temperature and humidity
+  -->
   <h2 class="section-title">📊 Live Dashboard</h2>
   <iframe
     src="https://thingsboard.cloud/dashboard/87fdc380-168d-11f0-86ac-951bbb28eae1?publicId=3fdf3290-1814-11f0-86ac-951bbb28eae1"
     allowfullscreen>
   </iframe>
-
+  <!--!
+   @brief This section contains the weather prediction
+   @details This section shows a scrolling graph of predicted weather conditions in the future
+  -->
   <h2 class="section-title" style="margin-top: 3rem;">🔮 Weather Prediction</h2>
   <iframe
     src="https://thingsboard.cloud/dashboard/7f9d0c60-2267-11f0-80e6-43c583a0c385?publicId=3fdf3290-1814-11f0-86ac-951bbb28eae1"
