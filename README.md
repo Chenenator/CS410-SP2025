@@ -48,3 +48,8 @@ This is a smart, connected weather station powered by an ESP32 board and various
       * G Pin -> Ground Slot
       * V Pin -> 3V3 Slot
       * S Pin -> D34 Slot
+
+🖥️ 2. Software Requirements
+  - Python 3.10+
+  - Arduino CLI
+  - Drivers for ESP32 
