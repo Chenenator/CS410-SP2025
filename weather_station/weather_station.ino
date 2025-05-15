@@ -14,7 +14,10 @@
     - PubSubClient by Nick O'Leary
     - TBPubSubClient by ThingsBoard
  */
-
+/**
+* @file weather_station.ino
+* @brief Arduino code that handles wifi connection, ThingsBoard connection, and reading sensor data
+*/
 #include <DHT.h>
 #include <WiFi.h>
 #include "esp_wpa2.h" // Needed for WPA2-Enterprise
