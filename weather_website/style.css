@@ -1,3 +1,8 @@
+/*!
+* @file style.css
+* @brief This file provides layouts and themes for the Weather Station website
+*/
+
 /* import Poppins formating*/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
@@ -38,6 +43,9 @@ body {
 }
 
 /* Navbar */
+/*!
+* @brief Formatting for the navigation bar
+*/
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -49,12 +57,16 @@ body {
     top: 0;
     z-index: 100;
 }
-
+/*!
+* @brief Formatting for the logo
+*/
 .logo {
     font-size: 1.5rem;
     font-weight: 600;
 }
-
+/*!
+* @brief Formatting for navigation links
+*/
 .nav-links {
     list-style: none;
     display: flex;
@@ -72,6 +84,9 @@ body {
 }
 
 /* Hamburger menu */
+/*!
+* @brief Formatting for the hamburger
+*/
 .hamburger {
     display: none;
     flex-direction: column;
@@ -86,6 +101,9 @@ body {
 }
 
 /* Sections */
+/*!
+* @brief Formatting for the different containers
+*/
 .section-container {
     max-width: 800px;
     margin: 3rem auto;
@@ -149,6 +167,9 @@ button:hover {
 }
 
 /* Dark toggle */
+/*!
+* @brief formatting for the dark mode toggle button
+*/
 .dark-toggle {
     background: none;
     border: none;
@@ -158,6 +179,9 @@ button:hover {
 }
 
 /* Dashboard */
+/*!
+* @brief Iframe for the dashboard
+*/
 iframe {
     width: 95%;
     max-width: 1200px;
@@ -193,6 +217,9 @@ footer a {
 }
 
 /* Animation */
+/*!
+* @brief fading in animation for fading in elements
+*/
 @keyframes fadeIn {
     to {
         opacity: 1;
