@@ -1,3 +1,9 @@
+
+/**
+* @file backend.js
+*
+* @brief This file handles the backend of the weather station
+*/
 // Using Node.js frameworks
 const express = require('express'); // For creating a servers
 const axios = require('axios'); // For requests to external APIs
@@ -16,6 +22,11 @@ let jwtToken = null;
 let tokenExpires = 0;
 
 // Login and get JWT token
+/**
+* @brief Funciton to log in to ThingsBoard
+*
+* @details This funciton uses TB_USERNAME and TB_PASSWORD to log in to ThingsBoard
+*/
 async function loginToThingsboard() {
   // response = { data: { token: '...' } , status: 200 , etc. }
   const res = await axios.post(`${TB_BASE_URL}/api/auth/login`, {
@@ -32,6 +43,12 @@ async function loginToThingsboard() {
 }
 
 // Makes request to ThingsBoard to retrieve brightness
+/**
+* @brief Funciton gets brightness value
+*
+* @details This funciton checks token then returns brightness value
+* @returns String the string representation of brightness levels
+*/
 async function getBrightness() {
   // Check if token is expired before making request
   if (!jwtToken || Date.now() >= tokenExpires) { 
@@ -52,6 +69,10 @@ async function getBrightness() {
 }
 
 // Endpoint your frontend can call
+/**
+* @brief Funciton to allow frontend to print brightness
+*
+*/
 app.get('/brightness', async (req, res) => {
   try {
     const brightness = await getBrightness();
@@ -65,6 +86,11 @@ app.get('/brightness', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 // Start server using Express.js framework
+/**
+* @brief Funciton to start server
+*
+* @details This function starts the server using Express.js framework
+*/
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
