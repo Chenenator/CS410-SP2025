@@ -23,9 +23,9 @@ let tokenExpires = 0;
 
 // Login and get JWT token
 /**
-* @brief Funciton to log in to ThingsBoard
+* @brief Function to log in to ThingsBoard
 *
-* @details This funciton uses TB_USERNAME and TB_PASSWORD to log in to ThingsBoard
+* @details This function uses TB_USERNAME and TB_PASSWORD to log in to ThingsBoard
 */
 async function loginToThingsboard() {
   // response = { data: { token: '...' } , status: 200 , etc. }
@@ -44,9 +44,9 @@ async function loginToThingsboard() {
 
 // Makes request to ThingsBoard to retrieve brightness
 /**
-* @brief Funciton gets brightness value
+* @brief Function gets brightness value
 *
-* @details This funciton checks token then returns brightness value
+* @details This function checks token then returns brightness value
 * @returns String the string representation of brightness levels
 */
 async function getBrightness() {
@@ -70,7 +70,7 @@ async function getBrightness() {
 
 // Endpoint your frontend can call
 /**
-* @brief Funciton to allow frontend to print brightness
+* @brief Function to allow frontend to print brightness
 *
 */
 app.get('/brightness', async (req, res) => {
@@ -87,7 +87,7 @@ app.get('/brightness', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 // Start server using Express.js framework
 /**
-* @brief Funciton to start server
+* @brief Function to start server
 *
 * @details This function starts the server using Express.js framework
 */
