@@ -1,4 +1,8 @@
 <?php
+/**
+* @file weather_data.php
+* @brief handles username, password, and tokens
+*/
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
@@ -10,6 +14,13 @@ $keys = 'TempF,TempC,Humidity,Brightness';
 $tokenFile = __DIR__ . '/auth.json';
 
 // Login function
+/**
+* @brief Handles login to ThingBoard and stores JWT token
+* @param string $username The username email for ThingsBoard
+* @param int $password The password for ThingsBoard
+* @param string $tokenFile Path to the file where the token is 
+* @return array Returns array with token
+*/
 function login($username, $password, $tokenFile) {
     $data = json_encode(['username' => $username, 'password' => $password]);
     $opts = ['http' => [
@@ -29,6 +40,12 @@ function login($username, $password, $tokenFile) {
 }
 
 // Refresh token
+/**
+* @brief Refresh the ThingsBoard JWT token
+* @param string $refreshToken The refresh token
+* @param string $tokenFile Path to the file where the token is
+* @return array Returns array with new token
+*/
 function refreshToken($refreshToken, $tokenFile) {
     $opts = ['http' => [
         'method' => 'POST',
@@ -48,6 +65,13 @@ function refreshToken($refreshToken, $tokenFile) {
 }
 
 // Get current valid token
+/**
+* @brief Retrieves ThingsBoard JWT token
+* @param string $username The username email for ThingsBoard
+* @param int $password The ThingsBoard password
+* @param string $tokenFile Path to the file where the token is
+* @return array Returns array with auth
+*/
 function getToken($username, $password, $tokenFile) {
     if (!file_exists($tokenFile)) {
         return login($username, $password, $tokenFile);
@@ -60,6 +84,13 @@ function getToken($username, $password, $tokenFile) {
 }
 
 // Try data fetch (with retry)
+/**
+* @brief Gets telemetry data from ThingsBoard
+* @param array $auth Array containing JWT token
+* @param string $deviceId The ID of the ThingsBoard
+* @param string $keys list of telemetry columns
+* @return string the JSON response 
+*/
 function fetchWeather($auth, $deviceId, $keys) {
     $url = "https://thingsboard.cloud/api/plugins/telemetry/DEVICE/$deviceId/values/timeseries?keys=$keys";
     $headers = [
