@@ -33,4 +33,18 @@ This is a smart, connected weather station powered by an ESP32 board and various
 
 ---
 
-## Manual
+## 📖 Manual
+
+🔌 1. Hardware Setup
+  -  DHT11 Humidity Sensor:
+      * G Pin -> Ground Slot
+      * V Pin -> 3V3 Slot
+      * S Pin -> D4 Slot
+  -  LM35 Temperature Sensor:
+      * G Pin -> Ground Slot
+      * V Pin -> VIN Slot
+      * S Pin -> D35 Slot
+  -  Photocell Sensor:
+      * G Pin -> Ground Slot
+      * V Pin -> 3V3 Slot
+      * S Pin -> D34 Slot
