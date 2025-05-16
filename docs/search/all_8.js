@@ -10,6 +10,6 @@ var searchData=
   ['device_5fid_7',['DEVICE_ID',['../namespace____main____.html#a0f74706399eb8665383f41d76bb5f2b3',1,'__main__.DEVICE_ID'],['../namespacegather__weather__data.html#a2a45ccfe6f9aecb4b6740b9659062b40',1,'gather_weather_data.DEVICE_ID']]],
   ['dht11_8',['dht11',['../weather__station_8ino.html#aae0e9b1fa86af6ca46308a22fedc0302',1,'weather_station.ino']]],
   ['dht11_5fpin_9',['DHT11_PIN',['../weather__station_8ino.html#a79111e78831efb8ac76fa8123357475e',1,'weather_station.ino']]],
-  ['display_5fweather_5fdata_10',['display_weather_data',['../class_weather_api_1_1_weather_data.html#a934ad6f4588d13c9c9ac24a60e7fa687',1,'WeatherApi::WeatherData']]],
+  ['display_5fweather_5fdata_10',['display_weather_data',['../class_weather___api_1_1_weather_data.html#a07b95ec1f67046ff9257722be8c20bb9',1,'Weather_Api::WeatherData']]],
   ['documentation_11',['📄 Code Documentation',['../md__r_e_a_d_m_e.html#autotoc_md7',1,'']]]
 ];
