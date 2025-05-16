@@ -350,7 +350,9 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 # Note see also the list of default file extension mappings.
 
 EXTENSION_MAPPING      = ino=C++ \
-                         py=Python
+                         py=Python \
+                         js=JavaScript \
+                         html=JavaScript
 
 # If the MARKDOWN_SUPPORT tag is enabled then Doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -1086,13 +1088,15 @@ FILE_PATTERNS          = *.c \
                          *.ucf \
                          *.qsf \
                          *.ice \
-                         *.ino
+                         *.ino \
+                         index.html \
+                         script.js
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = YES
+RECURSIVE              = NO
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
