@@ -76,13 +76,13 @@ Run the GUI or directly execute:
 
 Wi-Fi Credentials:
 
-Auto-detects and updates .ino with current SSID and password
+- Auto-detects and updates .ino with current SSID and password
 
-Eduroam/WPA2-Enterprise support with prompt for university credentials
+- Eduroam/WPA2-Enterprise support with prompt for university credentials
 
 Additional / Optional Setup:
 
-Consider finding a cloud to record all numerical data, a web host to display data for public to see, and a proxy server for any backend tasks, such as requesting data from the cloud.
+- Consider finding a cloud to record all numerical data, a web host to display data for public to see, and a proxy server for any backend tasks, such as requesting data from the cloud.
 
 ---
 
@@ -96,7 +96,7 @@ python src/weather_analysis/weather_gui_launcher.py
 
 ### 💡 5. How to Use
 
-- Navigation Bar
+- Navigation Bar:
     * Weather: Clicking on this brings you to the Weather Section.
     * Dashboard: Clicking on this brings you to the the first dashboard in the Dashboard Section, the Temperature and Humidity time graph.
     * GitHub: Clicking on this brings you to the GitHub repository.
