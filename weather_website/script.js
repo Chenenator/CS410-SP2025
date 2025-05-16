@@ -1,13 +1,10 @@
 /**
-* @file scrip.js
-*
+* @file script.js
 * @brief This file contains useful function for handling data and managing website
 */
 
-//function for switching to dark mode (purple)
 /**
 * @brief This function toggles between light and dark mode
-*
 * @details This fuction switches the website background between blue(light) and purple(dark)
 */
 function toggleDarkMode() {
@@ -24,7 +21,6 @@ function toggleMobileNav() {
     document.getElementById("nav-links").classList.toggle("show");
 }
 
-//function for calculating "feels like" temp
 /**
 * @brief This function calculates the "feels like" temp
 *
@@ -51,7 +47,6 @@ function calculateFeelsLike(tempF, humidity) {
     return HI.toFixed(1);
 }
 
-//function for refreshing temp, humidity, and light data
 /**
 * @brief This function refreshes sensor data
 *

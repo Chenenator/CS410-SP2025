@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['🖥️_202_20software_20requirements_0',['🖥️ 2. Software Requirements',['../md__r_e_a_d_m_e.html#autotoc_md13',1,'']]]
+  ['🔌_201_20hardware_20setup_0',['🔌 1. Hardware Setup',['../md__r_e_a_d_m_e.html#autotoc_md11',1,'']]]
 ];

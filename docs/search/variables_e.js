@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['weather_0',['weather',['../classweather__analysis_1_1_weather_analyzer.html#a7e5397fde6f8938f48d74c3e14147fed',1,'weather_analysis::WeatherAnalyzer']]],
-  ['weather_5fdata_1',['weather_data',['../classweather__predictor_1_1_weather_predictor.html#a042ddafdd10cf6021a9b34cbbcd20bb1',1,'weather_predictor::WeatherPredictor']]]
+  ['username_0',['USERNAME',['../namespace____main____.html#a868385187cf86f3fd5bc84c27afd0b6a',1,'__main__.USERNAME'],['../namespacegather__weather__data.html#a2e29823ba8ea2496726dc08e8273555a',1,'gather_weather_data.USERNAME']]]
 ];

@@ -1,22 +1,7 @@
 var searchData=
 [
-  ['weather_0',['weather',['../classweather__analysis_1_1_weather_analyzer.html#a7e5397fde6f8938f48d74c3e14147fed',1,'weather_analysis::WeatherAnalyzer']]],
-  ['weather_20station_20with_20ai_20forecasting_1',['🌦️ ESP32 IoT Weather Station with AI Forecasting',['../md__r_e_a_d_m_e.html#autotoc_md1',1,'']]],
-  ['weather_5fanalysis_2',['weather_analysis',['../namespaceweather__analysis.html',1,'']]],
-  ['weather_5fanalysis_2epy_3',['weather_analysis.py',['../weather__analysis_8py.html',1,'']]],
-  ['weather_5fapi_4',['Weather_api',['../namespace_weather__api.html',1,'']]],
-  ['weather_5fapi_2epy_5',['Weather_api.py',['../_weather__api_8py.html',1,'']]],
-  ['weather_5fdata_6',['weather_data',['../classweather__predictor_1_1_weather_predictor.html#a042ddafdd10cf6021a9b34cbbcd20bb1',1,'weather_predictor::WeatherPredictor']]],
-  ['weather_5fdata_2ephp_7',['weather_data.php',['../weather__data_8php.html',1,'']]],
-  ['weather_5fgui_5flauncher_8',['weather_gui_launcher',['../namespaceweather__gui__launcher.html',1,'']]],
-  ['weather_5fgui_5flauncher_2epy_9',['weather_gui_launcher.py',['../weather__gui__launcher_8py.html',1,'']]],
-  ['weather_5fpredictor_10',['weather_predictor',['../namespaceweather__predictor.html',1,'']]],
-  ['weather_5fpredictor_2epy_11',['weather_predictor.py',['../weather__predictor_8py.html',1,'']]],
-  ['weather_5fstation_2eino_12',['weather_station.ino',['../weather__station_8ino.html',1,'']]],
-  ['weatheranalyzer_13',['WeatherAnalyzer',['../classweather__analysis_1_1_weather_analyzer.html',1,'weather_analysis']]],
-  ['weatherapi_14',['WeatherApi',['../class_weather__api_1_1_weather_api.html',1,'Weather_api']]],
-  ['weatherdata_15',['WeatherData',['../class_weather__api_1_1_weather_data.html',1,'Weather_api']]],
-  ['weatherpredictor_16',['WeatherPredictor',['../classweather__predictor_1_1_weather_predictor.html',1,'weather_predictor']]],
-  ['with_20ai_20forecasting_17',['🌦️ ESP32 IoT Weather Station with AI Forecasting',['../md__r_e_a_d_m_e.html#autotoc_md1',1,'']]],
-  ['write_18',['write',['../classweather__gui__launcher_1_1_text_redirector.html#a02d372f2a5be1367cdf056b4d9323ea5',1,'weather_gui_launcher::TextRedirector']]]
+  ['update_5fwifi_5fcredentials_5feduroam_5fin_5fino_0',['update_wifi_credentials_eduroam_in_ino',['../namespacetemperature.html#ac5a120a33d0ae532a21250a8b2929ef4',1,'temperature']]],
+  ['update_5fwifi_5fcredentials_5fin_5fino_1',['update_wifi_credentials_in_ino',['../namespacetemperature.html#a12e64671bcff31b5619b03cf06c4b7c4',1,'temperature']]],
+  ['use_2',['💡 5. How to Use',['../md__r_e_a_d_m_e.html#autotoc_md14',1,'']]],
+  ['username_3',['USERNAME',['../namespace____main____.html#a868385187cf86f3fd5bc84c27afd0b6a',1,'__main__.USERNAME'],['../namespacegather__weather__data.html#a2e29823ba8ea2496726dc08e8273555a',1,'gather_weather_data.USERNAME']]]
 ];
