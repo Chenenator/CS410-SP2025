@@ -23,7 +23,7 @@ This is a smart, connected weather station powered by an ESP32 board and various
 
 ## 🧰 Hardware Components
 
-| Component         | Description                       |
+| Component         | Description                      |
 |------------------|-----------------------------------|
 | ESP32-WROVER Kit | Main microcontroller              |
 | DHT11            | Humidity and Temperature Sensor   |
@@ -80,9 +80,11 @@ Wi-Fi Credentials:
 
 - Eduroam/WPA2-Enterprise support with prompt for university credentials
 
-Additional / Optional Setup:
+Additional Setup Considerations:
 
-- Consider finding a cloud to record all numerical data, a web host to display data for public to see, and a proxy server for any backend tasks, such as requesting data from the cloud.
+- A cloud to record all numerical data (e.g. ThingsBoard)
+- A web host to display data for the public to see
+- A proxy server for any backend tasks, such as requesting data from the cloud (e.g. Microsoft Azure)
 
 ---
 
