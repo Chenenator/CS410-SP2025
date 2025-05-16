@@ -8,5 +8,7 @@ var searchData=
   ['get_5fmiscellaneous_5fweather_5fdata_5',['get_miscellaneous_weather_data',['../class_weather_api_1_1_weather_api.html#ae9a64cd2831cb57ce259f02c25bccbaf',1,'WeatherApi::WeatherApi']]],
   ['get_5fn_5fday_5fforecast_6',['get_N_day_forecast',['../classweather__predictor_1_1_weather_predictor.html#a826a94b2e417063f52b676cb61310eb8',1,'weather_predictor::WeatherPredictor']]],
   ['get_5fpredictors_7',['get_predictors',['../classweather__predictor_1_1_weather_predictor.html#a7eb4ab66754fb4234407e7d1b4fe73c6',1,'weather_predictor::WeatherPredictor']]],
-  ['gettoken_8',['getToken',['../weather__data_8php.html#a7b36ae22f7dc7d908614549c70d446b2',1,'weather_data.php']]]
+  ['gettoken_8',['getToken',['../weather__data_8php.html#a7b36ae22f7dc7d908614549c70d446b2',1,'weather_data.php']]],
+  ['github_20io_20cs410_20sp2025_9',['Go here: https://chenenator.github.io/CS410-SP2025/',['../md__r_e_a_d_m_e.html#autotoc_md8',1,'']]],
+  ['go_20here_3a_20https_3a_20chenenator_20github_20io_20cs410_20sp2025_10',['Go here: https://chenenator.github.io/CS410-SP2025/',['../md__r_e_a_d_m_e.html#autotoc_md8',1,'']]]
 ];

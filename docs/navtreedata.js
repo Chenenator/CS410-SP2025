@@ -29,10 +29,13 @@ var NAVTREE =
       [ "🌦️ ESP32 IoT Weather Station with AI Forecasting", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
       [ "🚀 Features", "md__r_e_a_d_m_e.html#autotoc_md3", null ],
       [ "🧰 Hardware Components", "md__r_e_a_d_m_e.html#autotoc_md5", null ],
-      [ "📖 Manual", "md__r_e_a_d_m_e.html#autotoc_md7", [
-        [ "🔌 1. Hardware Setup", "md__r_e_a_d_m_e.html#autotoc_md8", null ],
-        [ "🖥️ 2. Software Requirements", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
-        [ "💡 5. How to Use", "md__r_e_a_d_m_e.html#autotoc_md11", null ]
+      [ "📄 Code Documentation", "md__r_e_a_d_m_e.html#autotoc_md7", [
+        [ "Go here: https://chenenator.github.io/CS410-SP2025/", "md__r_e_a_d_m_e.html#autotoc_md8", null ],
+        [ "📖 Manual", "md__r_e_a_d_m_e.html#autotoc_md10", [
+          [ "🔌 1. Hardware Setup", "md__r_e_a_d_m_e.html#autotoc_md11", null ],
+          [ "🖥️ 2. Software Requirements", "md__r_e_a_d_m_e.html#autotoc_md13", null ],
+          [ "💡 5. How to Use", "md__r_e_a_d_m_e.html#autotoc_md14", null ]
+        ] ]
       ] ]
     ] ],
     [ "Namespace Members", "namespacemembers.html", [

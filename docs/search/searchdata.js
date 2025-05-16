@@ -1,6 +1,6 @@
 var indexSectionsWithContent =
 {
-  0: "$125_abcdefghijlmprstuw🌦💡📖🔌🖥🚀🧰",
+  0: "$125_abcdefghijlmprstuw🌦💡📄📖🔌🖥🚀🧰",
   1: "tw",
   2: "_dgtw",
   3: "_dgrtw",

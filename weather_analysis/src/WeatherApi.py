@@ -7,6 +7,8 @@
 #  @note Useful for future improvements on this project.
 
 import requests
+
+
 ## @class WeatherApi
 #  @brief A class for interacting with the Tomorrow.io Weather API.
 #  @details Provides basic functionality for making real-time weather API requests.
@@ -25,7 +27,7 @@ class WeatherApi:
     #  @param city The name of the city (e.g., "Boston Massachusetts").
     #  @param units The units of measurement (default is "imperial").
     #  @return JSON response from the API or None if request fails.
-    def get_miscellaneous_weather_data(self, city, units= "imperial"):
+    def get_miscellaneous_weather_data(self, city, units="imperial"):
         # Construct API URL
         formatted_city = city.replace(" ", "%20")
         url = f"{self.BASE_URL}{formatted_city}&units={units}&apikey={self.api_key}"
@@ -38,6 +40,7 @@ class WeatherApi:
             print(f"Response: {response.text}")
             return None
 
+
 ## @class WeatherData
 #  @brief A subclass of WeatherApi to process and display weather data.
 #  @details Inherits API access from WeatherApi and adds methods to extract and present weather metrics.
@@ -46,32 +49,33 @@ class WeatherData(WeatherApi):
     ## @brief Extract and display various weather metrics from the API response.
     #  @param weather_data The JSON object returned from the API call.
     #  @return None
- def display_weather_data(self, weather_data):
-     try:
-         values = weather_data["data"]["values"]
+    def display_weather_data(self, weather_data):
+        try:
+            values = weather_data["data"]["values"]
 
-         print("Weather Data:")
-         print(f"Cloud Base: {values['cloudBase']} km")
-         print(f"Cloud Ceiling: {values['cloudCeiling']} km")
-         print(f"Cloud Cover: {values['cloudCover']}%")
-         print(f"Dew Point: {values['dewPoint']} °F")
-         print(f"Freezing Rain Intensity: {values['freezingRainIntensity']}%")
-         print(f"Precipitation Probability: {values['precipitationProbability']}%")
-         print(f"Pressure Surface Level: {values['pressureSurfaceLevel']} hPa")
-         print(f"Rain Intensity: {values['rainIntensity']} mm/hr")
-         print(f"Sleet Intensity: {values['sleetIntensity']} mm/hr")
-         print(f"Snow Intensity: {values['snowIntensity']} mm/hr")
-         print(f"Apparent Temperature: {values['temperatureApparent']} °F")
-         print(f"UV Health Concern: {values['uvHealthConcern']}")
-         print(f"UV Index: {values['uvIndex']}")
-         print(f"Visibility: {values['visibility']} miles")
-         print(f"Wind Direction: {values['windDirection']}°")
-         print(f"Wind Gust: {values['windGust']} mph")
-         print(f"Wind Speed: {values['windSpeed']} mph")
+            print("Weather Data:")
+            print(f"Cloud Base: {values['cloudBase']} km")
+            print(f"Cloud Ceiling: {values['cloudCeiling']} km")
+            print(f"Cloud Cover: {values['cloudCover']}%")
+            print(f"Dew Point: {values['dewPoint']} °F")
+            print(f"Freezing Rain Intensity: {values['freezingRainIntensity']}%")
+            print(f"Precipitation Probability: {values['precipitationProbability']}%")
+            print(f"Pressure Surface Level: {values['pressureSurfaceLevel']} hPa")
+            print(f"Rain Intensity: {values['rainIntensity']} mm/hr")
+            print(f"Sleet Intensity: {values['sleetIntensity']} mm/hr")
+            print(f"Snow Intensity: {values['snowIntensity']} mm/hr")
+            print(f"Apparent Temperature: {values['temperatureApparent']} °F")
+            print(f"UV Health Concern: {values['uvHealthConcern']}")
+            print(f"UV Index: {values['uvIndex']}")
+            print(f"Visibility: {values['visibility']} miles")
+            print(f"Wind Direction: {values['windDirection']}°")
+            print(f"Wind Gust: {values['windGust']} mph")
+            print(f"Wind Speed: {values['windSpeed']} mph")
 
-     except KeyError:
-         print("Error: Unexpected response format.")
-         print(weather_data)
+        except KeyError:
+            print("Error: Unexpected response format.")
+            print(weather_data)
+
 
 ## @brief Main entry point of the script.
 #  @details Prompts user for a city, fetches and displays its weather data using Tomorrow.io API.
