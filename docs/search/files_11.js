@@ -496,7 +496,7 @@ var searchData=
   ['weather_5f_5fwebsite_5f2index_5f8html_2ehtml_493',['weather__website_2index_8html.html',['../weather____website__2index__8html_8html.html',1,'']]],
   ['weather_5f_5fwebsite_5f2index_5f8html_5fsource_2ehtml_494',['weather__website_2index_8html_source.html',['../weather____website__2index__8html__source_8html.html',1,'']]],
   ['weather_5fanalysis_2epy_495',['weather_analysis.py',['../weather__analysis_8py.html',1,'']]],
-  ['weather_5fapi_2epy_496',['Weather_api.py',['../_weather__api_8py.html',1,'']]],
+  ['weather_5fapi_2epy_496',['weather_api.py',['../_weather__api_8py.html',1,'']]],
   ['weather_5fdata_2ephp_497',['weather_data.php',['../weather__data_8php.html',1,'']]],
   ['weather_5fgui_5flauncher_2epy_498',['weather_gui_launcher.py',['../weather__gui__launcher_8py.html',1,'']]],
   ['weather_5fpredictor_2epy_499',['weather_predictor.py',['../weather__predictor_8py.html',1,'']]],

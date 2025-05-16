@@ -1,4 +1,4 @@
-## @file Weather_api.py
+## @file weather_api.py
 #  @brief Fetches and displays real-time weather data using Tomorrow.io API.
 #  @details
 #  This script allows users to input a city name and fetch its current weather
