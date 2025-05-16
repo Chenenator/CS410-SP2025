@@ -80,6 +80,10 @@ Auto-detects and updates .ino with current SSID and password
 
 Eduroam/WPA2-Enterprise support with prompt for university credentials
 
+Additional / Optional Setup:
+
+Consider finding a cloud to record all numerical data, a web host to display data for public to see, and a proxy server for any backend tasks, such as requesting data from the cloud.
+
 ---
 
 ### 🖱️ 4. Launch GUI
@@ -88,3 +92,19 @@ Run with Python:
 
 ```bash
 python src/weather_analysis/weather_gui_launcher.py
+```
+
+### 💡 5. How to Use
+
+- Navigation Bar
+    * Weather: Clicking on this brings you to the Weather Section.
+    * Dashboard: Clicking on this brings you to the the first dashboard in the Dashboard Section, the Temperature and Humidity time graph.
+    * GitHub: Clicking on this brings you to the GitHub repository.
+    * Moon toggle: Switches theme to light or dark mode. Refresh to see the switch automatically toggle on or off based on brightness level.
+
+- Weather Section:
+    * Shows basic numerical readings of temperature, humidity, brightness, and "feels like" temperature.
+
+- Dashboard Section:
+    * Temp and Humidity: Displays the time graph of temperature and humidity. Use this to see the trends of temperature and humidity.
+    * Weather Predictor: Displays time graph of the predicted high and low temperatures of the next few days.
