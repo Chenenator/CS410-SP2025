@@ -33,7 +33,10 @@ This is a smart, connected weather station powered by an ESP32 board and various
 | LCD (Optional)   | Display module via I2C            |
 
 ---
+# 📄 Code Documentation
+## Go here: https://chenenator.github.io/CS410-SP2025/
 
+---
 ## 📖 Manual
 
 ### 🔌 1. Hardware Setup
