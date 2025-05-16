@@ -1,22 +1,31 @@
-import requests
-#import os
+## @file WeatherApi.py
+#  @brief Fetches and displays real-time weather data using Tomorrow.io API.
+#  @details
+#  This script allows users to input a city name and fetch its current weather
+#  metrics using the Tomorrow.io REST API. It prints detailed conditions such as
+#  temperature, wind, precipitation, and visibility.
+#  @note Useful for future improvements on this project.
 
+import requests
+## @class WeatherApi
+#  @brief A class for interacting with the Tomorrow.io Weather API.
+#  @details Provides basic functionality for making real-time weather API requests.
 class WeatherApi:
-    """
-    Class for interacting with the Tomorrow.io Weather API.
-    Provides basic functionality for making requests to the API
-    """
+    ## @var BASE_URL
+    #  @brief Base URL for the Tomorrow.io real-time weather API.
     BASE_URL = "https://api.tomorrow.io/v4/weather/realtime?location="
+
+    ## @brief Constructor to initialize the API key.
+    #  @param api_key The API key for authenticating with Tomorrow.io.
+    #  @note Change the api key in main() if the old one is not working.
     def __init__(self, api_key):
         self.api_key = api_key
 
+    ## @brief Fetch miscellaneous weather data for a given city.
+    #  @param city The name of the city (e.g., "Boston Massachusetts").
+    #  @param units The units of measurement (default is "imperial").
+    #  @return JSON response from the API or None if request fails.
     def get_miscellaneous_weather_data(self, city, units= "imperial"):
-        """
-        Fetch weather data for a given city.
-        :param city: Location (e.g., "Boston Massachusetts") as a string.
-        :param units: Units for weather data (default: "imperial").
-        :return: JSON response or None if request fails.
-        """
         # Construct API URL
         formatted_city = city.replace(" ", "%20")
         url = f"{self.BASE_URL}{formatted_city}&units={units}&apikey={self.api_key}"
@@ -29,18 +38,15 @@ class WeatherApi:
             print(f"Response: {response.text}")
             return None
 
+## @class WeatherData
+#  @brief A subclass of WeatherApi to process and display weather data.
+#  @details Inherits API access from WeatherApi and adds methods to extract and present weather metrics.
 class WeatherData(WeatherApi):
- """
- Derived class for handling and displaying weather data.
- Inherits basic API functionality from WeatherAPI.
- """
 
+    ## @brief Extract and display various weather metrics from the API response.
+    #  @param weather_data The JSON object returned from the API call.
+    #  @return None
  def display_weather_data(self, weather_data):
-     """
-     Extract and display miscellaneous weather information.
-
-     :param weather_data: The JSON response containing weather information.
-     """
      try:
          values = weather_data["data"]["values"]
 
@@ -67,6 +73,8 @@ class WeatherData(WeatherApi):
          print("Error: Unexpected response format.")
          print(weather_data)
 
+## @brief Main entry point of the script.
+#  @details Prompts user for a city, fetches and displays its weather data using Tomorrow.io API.
 def main():
     api_key = "iR7AB19TwE1p5yFXW41OmAdQ8wFqAEAc"
     if not api_key:

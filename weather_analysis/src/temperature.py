@@ -1,3 +1,12 @@
+## @file temperature.py
+#  @brief Automates ESP32 Wi-Fi setup, sketch upload, and serial weather data logging.
+#  @details This script:
+#  - Detects or prompts for a Wi-Fi network (supports Eduroam).
+#  - Injects credentials into an Arduino sketch.
+#  - Compiles and uploads the sketch via arduino-cli.
+#  - Reads sensor data from the ESP32 over serial.
+#  - Logs readings to a daily CSV file.
+
 import os
 import re
 import serial
@@ -7,19 +16,36 @@ import platform
 from datetime import datetime
 import pyautogui
 
-# Get the current working directory, then go up to project root.
+## @var current_dir
+#  @brief Directory of this script file.
 current_dir = os.path.dirname(os.path.abspath(__file__))
+## @var project_root
+#  @brief Root of the project directory.
 project_root = os.path.dirname(os.path.dirname(current_dir))
 
-esp32_sketch_path = os.path.join(project_root, "weather_station")  # Folder containing your .ino file
-esp32_board = "esp32:esp32:esp32wroverkit"  # Replace if you're using another ESP32 variant
-esp32_port = "COM3"  # Adjust as needed if COM is different
+## @var esp32_sketch_path
+#  @brief Path to folder containing the ESP32 Arduino sketch (.ino file).
+#  @note change "weather_station" if your .ino file is different
+esp32_sketch_path = os.path.join(project_root, "weather_station")
+
+## @var esp32_board
+#  @brief Board type for arduino-cli to compile for.
+#  @note Replace "esp32:esp32:esp32wroverkit" if you're using another ESP32 variant
+esp32_board = "esp32:esp32:esp32wroverkit"
+
+## @var esp32_port
+#  @brief Serial port for ESP32 device.
+#  @note  Adjust as needed if COM port is different
+esp32_port = "COM3"
+
+## @var localWeatherFolder
+#  @brief Path where local weather CSV logs are stored.
 localWeatherFolder = os.path.join(project_root, "weather_analysis", "data",
-                                  "localweather")  # Folder to contain recorded weather data.
+                                  "localweather")
 
-
-# For when the program cannot detect the current network, list them out
-# for the user to choose.
+## @brief Lists nearby Wi-Fi SSIDs using system commands.
+#  @return List of detected SSID names.
+#  @details Uses `netsh` on Windows and `nmcli` on Linux to scan for visible Wi-Fi networks.
 def list_ssid():
     os_name = platform.system()
     ssids = []
@@ -47,7 +73,10 @@ def list_ssid():
     return ssids
 
 
-# Get the current network credentials.
+## @brief Retrieves the password of the current or specified SSID from Windows profiles.
+#  @param ssid Optional. SSID to look up manually. If None, uses the currently connected network.
+#  @return Tuple: (SSID, Password) or (SSID, None) if not found.
+#  @details Uses `netsh wlan show profile` to get the saved credentials from the system.
 def get_current_network_credentials(ssid):
     try:
         # Get current connected SSID
@@ -85,7 +114,10 @@ def get_current_network_credentials(ssid):
         print(f"Command failed: {e}")
 
 
-# Automatically updates the password in the ino file based on user input.
+## @brief Updates the SSID and password fields in the Arduino sketch.
+#  @param ssid Wi-Fi SSID.
+#  @param password Wi-Fi password.
+#  @details Modifies the `const char* ssid` and `password` lines in the .ino file.
 def update_wifi_credentials_in_ino(ssid, password):
     # Creates a variable for the ino files and its path.
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
@@ -97,7 +129,7 @@ def update_wifi_credentials_in_ino(ssid, password):
 
     # Error checking to make sure fields are in .ino file.
     if 'const char* ssid =' not in code or 'const char* password =' not in code:
-        print("⚠️ Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
+        print(" Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
         return
 
     # In the .ino file, change the ssid and password fields of current connected network.
@@ -108,9 +140,15 @@ def update_wifi_credentials_in_ino(ssid, password):
     with open(ino_path, 'w') as file:
         file.write(updated_code)
 
-    print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
+    print(f" Wi-Fi ssid and password updated in {ino_file}")
 
 
+## @brief Updates the Arduino sketch with Eduroam-specific login credentials.
+#  @param ssid Eduroam SSID.
+#  @param password Eduroam password.
+#  @param eduroam_username University email used for Eduroam.
+#  @param eduroam_identity Same as username (unless configured otherwise).
+#  @details Updates 4 fields in the sketch: ssid, password, eduroam_username, and eduroam_identity.
 def update_wifi_credentials_eduroam_in_ino(ssid, password, eduroam_username, eduroam_identity):
     # Creates a variable for the ino files and its path.
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
@@ -122,7 +160,7 @@ def update_wifi_credentials_eduroam_in_ino(ssid, password, eduroam_username, edu
 
     # Error checking to make sure fields are in .ino file.
     if 'const char* ssid =' not in code or 'const char* password =' not in code or "const char* eduroam_username" not in code or "const char* eduroam_identity" not in code:
-        print("⚠️ Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
+        print(" Could not locate ssid/password fields. Make sure the .ino file has the expected format.")
         return
 
     # Update fields ssid, password, eduroam_username, and eduroam_identity.
@@ -136,10 +174,11 @@ def update_wifi_credentials_eduroam_in_ino(ssid, password, eduroam_username, edu
     with open(ino_path, 'w') as file:
         file.write(updated_code)
 
-    print(f"✅ Wi-Fi ssid and password updated in {ino_file}")
+    print(f" Wi-Fi ssid and password updated in {ino_file}")
 
 
-# Function to reset ssid and password of user once the program ends.
+## @brief Clears SSID, password, and Eduroam credentials from the .ino file.
+#  @details Used as a cleanup step after uploading to remove sensitive data.
 def clear_wifi_credentials():
     ino_file = [f for f in os.listdir(esp32_sketch_path) if f.endswith(".ino")][0]
     ino_path = os.path.join(esp32_sketch_path, ino_file)
@@ -157,22 +196,24 @@ def clear_wifi_credentials():
     with open(ino_path, 'w') as file:
         file.write(cleared_code)
 
-    print("🧹 Wi-Fi credentials cleared from .ino file.")
+    print(" Wi-Fi credentials cleared from .ino file.")
 
-
+## @brief Compiles and uploads the Arduino sketch to ESP32 using arduino-cli.
+#  @details Runs two subprocesses: one to compile and another to upload to the specified port.
 def compile_and_upload():
-    print("🔧 Compiling sketch...")
+    print(" Compiling sketch...")
     compile_cmd = ["arduino-cli", "compile", "--fqbn", esp32_board, esp32_sketch_path]
     subprocess.run(compile_cmd, check=True)
 
-    print("📤 Uploading to ESP32...")
+    print(" Uploading to ESP32...")
     upload_cmd = ["arduino-cli", "upload", "-p", esp32_port, "--fqbn", esp32_board, esp32_sketch_path]
     subprocess.run(upload_cmd, check=True)
 
-    print("✅ Upload complete!")
+    print(" Upload complete!")
 
 
-# Obtain the local weather data recorded and puts it into csv file.
+## @brief Opens serial port, listens to ESP32, and logs weather data to CSV.
+#  @details Continuously logs sensor output until interrupted (Ctrl+C).
 def gather_local_weather():
     date_str = datetime.now().strftime("%d-%m-%Y")
     os.makedirs(localWeatherFolder, exist_ok=True)
@@ -199,24 +240,26 @@ def gather_local_weather():
                         csv_file.flush()
 
         except KeyboardInterrupt:
-            print("🛑 Data logging stopped.")
+            print(" Data logging stopped.")
         finally:
             ser.close()
             clear_wifi_credentials()
 
 
+## @brief Main entry point: handles SSID selection, updates .ino, uploads, and logs data.
+#  @details Supports Eduroam and open networks. Handles SSID detection, prompting, and all data flow.
 def _main():
     clear_wifi_credentials()
     ssid, wifi_password = get_current_network_credentials(None)
     if not ssid:
-        print("❌ Could not detect SSID automatically.")
+        print(" Could not detect SSID automatically.")
         available_ssids = list_ssid()
 
         if not available_ssids:
-            print("❌ No networks found.")
+            print(" No networks found.")
             return
 
-        print("\n📡 Available Networks:")
+        print("\n Available Networks:")
         for i, network in enumerate(available_ssids, start=1):
             print(f"{i}. {network}")
 
@@ -228,11 +271,11 @@ def _main():
                     _, wifi_password = get_current_network_credentials(ssid)
                     break
                 else:
-                    print("⚠️ Invalid selection. Please choose a valid number.")
+                    print("Invalid selection. Please choose a valid number.")
             except ValueError:
-                print("⚠️ Please enter a number.")
+                print(" Please enter a number.")
     else:
-        print(f"📶 Detected network: {ssid}")
+        print(f" Detected network: {ssid}")
 
     if "eduroam" in ssid.lower():
         eduroam_credential = input("Enter your University Email address: ")

@@ -1,3 +1,8 @@
+## @file weather_predictor.py
+#  @brief Predicts future temperatures using Ridge regression and sends forecast to ThingsBoard.
+#  @details Loads historical weather data, predicts future tmax and tmin, and optionally sends results
+#  to Thingsboard.
+
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,14 +11,27 @@ from sklearn.linear_model import Ridge  # Ridge regression model
 import requests
 from datetime import datetime
 
-
+## @class WeatherPredictor
+#  @brief Predicts future weather (max/min temperatures) using Ridge regression.
+#  @details
+#  The class loads and preprocesses weather data, creates lagging and rolling features,
+#  fits a Ridge regression model, and performs sequential prediction for a specified number of days.
 class WeatherPredictor:
-    # Constructor to initialize the path to the weather data CSV file
+
+    ## @brief Constructor to initialize data path and model.
+    #  @param data_path: Path to the CSV file containing historical weather data.
+    #  @details Initializes the internal Ridge regression model and stores the path to the dataset.
     def __init__(self, data_path):
         self.data_path = data_path
         self.weather_data = None
         self.model = Ridge(alpha=0.1)  # Ridge regression model
 
+    ## @brief Loads the weather CSV and prepares features for training.
+    #  @details
+    #  - Loads weather data into a DataFrame.
+    #  - Fills missing values and removes low-quality columns.
+    #  - Shifts tmax/tmin columns to create targets for next-day prediction.
+    #  - Computes rolling averages and grouped expanding averages.
     def load_and_prepare_data(self):
         # Load the weather data CSV into DataFrame and clean it
         self.weather_data = pd.read_csv(self.data_path, index_col="DATE")
@@ -51,6 +69,10 @@ class WeatherPredictor:
         self.weather_data.replace([np.inf, -np.inf], np.nan, inplace=True)
         self.weather_data.fillna(0, inplace=True)
 
+    ## @brief Adds rolling average and percent difference for a given feature.
+    #  @param horizon: Number of days in rolling window.
+    #  @param col: Column to compute rolling average on.
+    #  @details Computes both the rolling mean and relative percentage change for use as features.
     def compute_rolling(self, horizon, col):
         # Compute rolling average and percentage difference for the given column
         label = f"rolling_{horizon}_{col}"
@@ -58,11 +80,20 @@ class WeatherPredictor:
         self.weather_data[f"{label}_percentage"] = (self.weather_data[label] - self.weather_data[col]) / \
                                                    self.weather_data[col]
 
+    ## @brief Returns list of predictor column names (excluding target variables).
+    #  @return list of strings representing feature columns used for training/prediction.
+    #  @details Excludes columns like max temp/min temp/station/name from predictors.
     def get_predictors(self):
         # Get list of predictor column names, excluding target and ID columns
         excluded = ["maxtemp", "mintemp", "name", "station"]
         return self.weather_data.columns[~self.weather_data.columns.isin(excluded)]
 
+    ## @brief Predicts max and min temperatures for the next N days.
+    #  @param days Number of future days to forecast.
+    #  @return list of dictionaries containing forecasted date, maxTemp, and minTemp.
+    #  @details
+    #  Performs recursive forecasting by using predicted values from the previous day
+    #  as input for the next day's prediction.
     def predict_next_days(self, days):
         # Predict the next N days of max and min temperature
         predictors = self.get_predictors()
@@ -97,11 +128,18 @@ class WeatherPredictor:
 
         return predictions
 
+    ## @brief Prepares data and runs prediction.
+    #  @param days Number of days to forecast.
+    #  @return list of forecast results for each day.
+    #  @details This is the main method to call for a complete forecast workflow.
     def get_N_day_forecast(self, days):
-        #  Main method to load data and return 3-day forecast
+        #  Main method to load data and return n-day forecast
         self.load_and_prepare_data()
         return self.predict_next_days(days)
 
+    ## @brief Plots historical Tmax and Tmin from the dataset.
+    #  @details
+    #  Displays a time series graph of the two temperature metrics.
     def plot_temperature_trend(self):
         # Plot historical temperature trends for both Tmax and Tmin with red line for clarity
         if self.weather_data is None:
@@ -118,7 +156,12 @@ class WeatherPredictor:
         plt.tight_layout()
         plt.show()
 
-
+## @brief Sends forecasted weather data to ThingsBoard via REST API.
+#  @param forecast List of dictionaries with forecasted max/min temperatures.
+#  @param token ThingsBoard device access token.
+#  @details
+#  Converts each day's forecast into a timestamped JSON payload and posts it individually
+#  to ThingsBoard cloud using HTTP POST to the device telemetry endpoint.
 def send_to_thingsboard(forecast, token):
     url = f"https://thingsboard.cloud/api/v1/{token}/telemetry"
 
@@ -134,7 +177,7 @@ def send_to_thingsboard(forecast, token):
             }
         }
 
-        # ✅ Send each day's payload separately
+        # Send each day's payload separately
         response = requests.post(url, json=payload)
 
         if response.status_code != 200:
@@ -142,7 +185,10 @@ def send_to_thingsboard(forecast, token):
         else:
             print(f"Sent prediction for {day['date']}")
 
-
+## @brief Main script entry point.
+#  @details
+#  Initializes the WeatherPredictor with a CSV file, generates a multi-day forecast,
+#  prints the results, and sends them to ThingsBoard.
 if __name__ == "__main__":
     # path to bostonweather.csv
     data_file_path = os.path.join(os.path.dirname(os.getcwd()), "data", "bostonweather.csv")
@@ -157,5 +203,3 @@ if __name__ == "__main__":
 
     ACCESS_TOKEN = "RdUYWvQYczLFV5zSfziq"
     send_to_thingsboard(forecast, ACCESS_TOKEN)
-
-    #predictor.plot_temperature_trend()

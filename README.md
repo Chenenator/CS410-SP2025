@@ -1,4 +1,5 @@
-# 🌦️ ESP32 IoT Weather Station with AI Forecasting
+# HOME PAGE
+## 🌦️ ESP32 IoT Weather Station with AI Forecasting
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://www.python.org/)
 [![ESP32](https://img.shields.io/badge/Board-ESP32-orange?logo=arduino)](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/)
@@ -57,9 +58,7 @@ This is a smart, connected weather station powered by an ESP32 board and various
 - [Arduino CLI](https://arduino.github.io/arduino-cli/)
 - Install Python dependencies:
   ```bash
-  
   pip install -r requirements.txt
-
 ---
 
 ### ⚙️ 3. Initial Setup
@@ -91,7 +90,6 @@ Additional Setup Considerations:
 ### 🖱️ 4. Launch GUI
 
 Run with Python:
-
 ```bash
 python src/weather_analysis/weather_gui_launcher.py
 ```
