@@ -112,7 +112,7 @@ python src/weather_analysis/weather_gui_launcher.py
     * Temp and Humidity: Displays the time graph of temperature and humidity. Use this to see the trends of temperature and humidity.
     * Weather Predictor: Displays time graph of the predicted high and low temperatures of the next few days.
  
-### 6. Acknowledgements
+## Acknowledgements
 - Arduino CLI Documentation (https://docs.arduino.cc/arduino-cli/)
 - Random Nerd Tutorials (https://randomnerdtutorials.com)
 - ChatGPT
