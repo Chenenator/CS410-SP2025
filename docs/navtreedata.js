@@ -35,7 +35,8 @@ var NAVTREE =
           [ "🔌 1. Hardware Setup", "md__r_e_a_d_m_e.html#autotoc_md11", null ],
           [ "🖥️ 2. Software Requirements", "md__r_e_a_d_m_e.html#autotoc_md13", null ],
           [ "💡 5. How to Use", "md__r_e_a_d_m_e.html#autotoc_md14", null ]
-        ] ]
+        ] ],
+        [ "Acknowledgements", "md__r_e_a_d_m_e.html#autotoc_md15", null ]
       ] ]
     ] ],
     [ "Namespace Members", "namespacemembers.html", [
